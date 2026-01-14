@@ -10,4 +10,9 @@ public class Advice {
     public ResponseEntity<?> handleLoginException(LoginException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
+
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<?> handleAdminNotFoundException(AdminNotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }

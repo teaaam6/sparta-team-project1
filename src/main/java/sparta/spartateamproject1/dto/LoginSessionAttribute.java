@@ -1,7 +1,9 @@
 package sparta.spartateamproject1.dto;
 
+import lombok.Getter;
 import sparta.spartateamproject1.type.Role;
 
+@Getter
 public class LoginSessionAttribute {
     private Long id;
     private String email;

@@ -4,16 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.config.PasswordEncoder;
+import sparta.spartateamproject1.dto.FindSelfResponseDto;
 import sparta.spartateamproject1.dto.LoginRequestDto;
 import sparta.spartateamproject1.dto.LoginSessionAttribute;
 import sparta.spartateamproject1.dto.SignUpDto;
 import sparta.spartateamproject1.entity.Admin;
+import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.CustomException;
 import sparta.spartateamproject1.exception.LoginException;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
 import sparta.spartateamproject1.type.AdminStatus;
 import sparta.spartateamproject1.type.ErrorCode;
+import sparta.spartateamproject1.type.Role;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +59,23 @@ public class AdminServiceImpl implements AdminService {
         } else {
             throw new LoginException("비밀번호가 잘못되었습니다.");
         }
+    }
+
+    @Override
+    public FindSelfResponseDto findSelf(Long id) {
+        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        LocalDateTime activeAt = admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt();
+
+        return FindSelfResponseDto.builder()
+                .id(admin.getId())
+                .email(admin.getEmail())
+                .status(admin.getStatus())
+                .role(admin.getRole())
+                .name(admin.getName())
+                .phoneNumber(admin.getPhoneNumber())
+                .createdAt(admin.getCreatedAt())
+                .activeAt(activeAt)
+                .updatedAt(admin.getModifiedAt())
+                .build();
     }
 }

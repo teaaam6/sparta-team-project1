@@ -35,6 +35,7 @@ public class Admin {
     @Column(nullable = false)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private AdminStatus status;

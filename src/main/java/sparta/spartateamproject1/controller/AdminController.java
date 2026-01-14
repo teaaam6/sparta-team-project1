@@ -1,13 +1,14 @@
 package sparta.spartateamproject1.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import sparta.spartateamproject1.dto.LoginRequestDto;
+import sparta.spartateamproject1.dto.LoginSessionAttribute;
 import sparta.spartateamproject1.dto.SignUpDto;
 import sparta.spartateamproject1.service.AdminService;
 
@@ -20,7 +21,35 @@ public class AdminController {
     @PostMapping("/admins")
     public ResponseEntity<?> signup(
             @Valid @RequestBody SignUpDto.Request request
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.signup(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest httpServletRequest) {
+        LoginSessionAttribute loginSessionAttribute = adminService.login(requestDto);
+
+        // 기존 세션 있으면 제거
+        httpServletRequest.getSession().invalidate();
+        // 새로운 세션 생성
+        HttpSession session = httpServletRequest.getSession(true);
+        session.setAttribute("adminSession", loginSessionAttribute);
+        session.setMaxInactiveInterval(30 * 60);
+
+        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
+        // 현재 세션 제거
+        httpServletRequest.getSession().invalidate();
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 완료");
+    }
+
+    // @SessionAttribute의 required() default true 이므로 밑의 경로에 로그인하지 않은 사용자가 접근할 수 없다.
+    // 오직 로그인에 성공하여 sessionAttribute를 가진 사용자 만이 접근 가능하다.
+    @GetMapping("/self")
+    public ResponseEntity<?> self(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(loginSessionAttribute.getId()));
     }
 }

@@ -21,4 +21,9 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
         return ResponseEntity.badRequest().body(errorMessage);
     }
+
+    @ExceptionHandler(IllegalNumberException.class)
+    public ResponseEntity<String> handleIllegalNumberException(IllegalNumberException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }

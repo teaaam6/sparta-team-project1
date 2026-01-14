@@ -10,14 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.config.PasswordEncoder;
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
-import sparta.spartateamproject1.exception.AdminNotFoundException;
-import sparta.spartateamproject1.exception.CustomException;
-import sparta.spartateamproject1.exception.IllegalNumberException;
-import sparta.spartateamproject1.exception.LoginException;
+import sparta.spartateamproject1.exception.*;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
 import sparta.spartateamproject1.type.AdminStatus;
 import sparta.spartateamproject1.type.ErrorCode;
+import sparta.spartateamproject1.type.Role;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -132,13 +130,37 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
+    //관리자 수정
     @Override
-    public AdminUpdateDto.Response update(Long adminId, AdminUpdateDto.Request request) {
+    @Transactional
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 수정할 관리자의 아이디
+    public AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request) {
+        //슈퍼관리자 또는 자기자신인지 확인
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+//        if(!admin.getRole().equals(Role.SUPER_ADMIN)){
+//            throw new ForbiddenException("권한이 없습니다.");
+//        }
 
         admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
         return AdminUpdateDto.Response.fromEntity(admin);
     }
 
+    @Override
+    @Transactional
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 삭제할 관리자의 아이디
+    public void delete(Long id, Long adminId) {
+        //이 아이디가 슈퍼관리자인지 확인
+        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+//        if(!admin.getRole().equals(Role.SUPER_ADMIN)){
+//            throw new ForbiddenException("권한이 없습니다.");
+//        }
+        boolean exists = adminRepository.existsById(adminId);
+        if(!exists) {
+            throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
+        }
+        adminRepository.deleteById(adminId);
+    }
 
 }

@@ -19,5 +19,7 @@ public interface AdminService {
 
     AdminGetDto.Response findOne(Long id);
 
-    AdminUpdateDto.Response update(Long adminId, AdminUpdateDto.Request request);
+    AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
+
+    void delete(Long id, Long adminId);
 }

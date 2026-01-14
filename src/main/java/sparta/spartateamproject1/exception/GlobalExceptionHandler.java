@@ -1,5 +1,6 @@
 package sparta.spartateamproject1.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,5 +26,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalNumberException.class)
     public ResponseEntity<String> handleIllegalNumberException(IllegalNumberException e){
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handleForbiddenExceptionException(ForbiddenException e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }

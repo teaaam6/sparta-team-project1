@@ -74,7 +74,7 @@ public class AdminController {
 //        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute, pageable, request));
 //    }
     @GetMapping("/admins")
-    public ResponseEntity<List<AdminGetDto.Response>> getAll(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute){
+    public ResponseEntity<List<AdminGetDto.Response>> getAll(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute));
 
     }
@@ -83,7 +83,7 @@ public class AdminController {
     @GetMapping("/admins/{adminId}")
     public ResponseEntity<AdminGetDto.Response> getOne(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @PathVariable Long adminId){
+            @PathVariable Long adminId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(adminId));
 
     }
@@ -94,8 +94,17 @@ public class AdminController {
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
             @RequestBody AdminUpdateDto.Request request) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(adminId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(loginSessionAttribute.getId(), adminId, request));
     }
 
+
+    //관리자 삭제
+    @DeleteMapping("/admins/{adminId}")
+    public ResponseEntity<Void> delete(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId) {
+        adminService.delete(loginSessionAttribute.getId(), adminId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
 }

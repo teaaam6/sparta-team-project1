@@ -1,12 +1,15 @@
 package sparta.spartateamproject1.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.config.PasswordEncoder;
+import sparta.spartateamproject1.dto.LoginRequestDto;
+import sparta.spartateamproject1.dto.LoginSessionAttribute;
 import sparta.spartateamproject1.dto.SignUpDto;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.exception.CustomException;
+import sparta.spartateamproject1.exception.LoginException;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
 import sparta.spartateamproject1.type.AdminStatus;
@@ -14,12 +17,13 @@ import sparta.spartateamproject1.type.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     @Transactional
+    @Override
     public SignUpDto.Response signup(SignUpDto.Request request) {
         if (adminRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
@@ -37,5 +41,18 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.save(admin);
 
         return SignUpDto.Response.fromEntity(admin);
+    }
+
+    @Transactional
+    public LoginSessionAttribute login(LoginRequestDto requestDto) {
+        // 먼저 이메일로 유저를 찾는다.
+        Admin admin = adminRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new LoginException("회원가입된 이메일이 아닙니다."));
+        System.out.println(admin.getRole());
+
+        if (passwordEncoder.matches(requestDto.getPassword(), admin.getPassword())) {
+            return new LoginSessionAttribute(admin.getId(), admin.getEmail(), admin.getRole());
+        } else {
+            throw new LoginException("비밀번호가 잘못되었습니다.");
+        }
     }
 }

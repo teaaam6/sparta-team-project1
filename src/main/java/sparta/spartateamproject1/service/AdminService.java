@@ -1,9 +1,9 @@
 package sparta.spartateamproject1.service;
 
-import sparta.spartateamproject1.dto.FindSelfResponseDto;
-import sparta.spartateamproject1.dto.LoginRequestDto;
-import sparta.spartateamproject1.dto.LoginSessionAttribute;
-import sparta.spartateamproject1.dto.SignUpDto;
+import org.springframework.data.domain.Pageable;
+import sparta.spartateamproject1.dto.*;
+
+import java.util.List;
 
 public interface AdminService {
     SignUpDto.Response signup(SignUpDto.Request request);
@@ -11,4 +11,15 @@ public interface AdminService {
     LoginSessionAttribute login(LoginRequestDto requestDto);
 
     FindSelfResponseDto findSelf(Long id);
+
+    //Todo
+    //List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto request);
+
+    List<AdminGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute);
+
+    AdminGetDto.Response findOne(Long id);
+
+    AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
+
+    void delete(Long id, Long adminId);
 }

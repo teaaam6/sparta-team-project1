@@ -4,13 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sparta.spartateamproject1.dto.LoginRequestDto;
-import sparta.spartateamproject1.dto.LoginSessionAttribute;
-import sparta.spartateamproject1.dto.SignUpDto;
+import sparta.spartateamproject1.dto.*;
+import sparta.spartateamproject1.exception.IllegalNumberException;
 import sparta.spartateamproject1.service.AdminService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,4 +56,55 @@ public class AdminController {
     public ResponseEntity<?> self(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(loginSessionAttribute.getId()));
     }
+
+    //관리자 전체 조회
+    //TODO: 조건별 검색
+//    @GetMapping("/admins")
+//    public ResponseEntity<List<AdminGetDto>> getAll(
+//            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestBody(required = false) AdminGetDto.Request request
+//    ) {
+//        //페이지 검증
+//        if (page < 0 || size < 0) {
+//            throw new IllegalNumberException("잘못된 페이지 번호입니다.");
+//        }
+//        Pageable pageable = PageRequest.of(page, size);
+//        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute, pageable, request));
+//    }
+    @GetMapping("/admins")
+    public ResponseEntity<List<AdminGetDto.Response>> getAll(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute));
+
+    }
+
+    //관리자 단건 조회
+    @GetMapping("/admins/{adminId}")
+    public ResponseEntity<AdminGetDto.Response> getOne(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(adminId));
+
+    }
+
+    //관리자 수정
+    @PatchMapping("/admins/{adminId}")
+    public ResponseEntity<AdminUpdateDto.Response> update(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId,
+            @RequestBody AdminUpdateDto.Request request) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(loginSessionAttribute.getId(), adminId, request));
+    }
+
+
+    //관리자 삭제
+    @DeleteMapping("/admins/{adminId}")
+    public ResponseEntity<Void> delete(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId) {
+        adminService.delete(loginSessionAttribute.getId(), adminId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

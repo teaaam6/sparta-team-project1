@@ -4,15 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sparta.spartateamproject1.dto.AdminGetDto;
-import sparta.spartateamproject1.dto.LoginRequestDto;
-import sparta.spartateamproject1.dto.LoginSessionAttribute;
-import sparta.spartateamproject1.dto.SignUpDto;
+import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.exception.IllegalNumberException;
 import sparta.spartateamproject1.service.AdminService;
 
@@ -88,6 +86,15 @@ public class AdminController {
             @PathVariable Long adminId){
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(adminId));
 
+    }
+
+    //관리자 수정
+    @PatchMapping("/admins/{adminId}")
+    public ResponseEntity<AdminUpdateDto.Response> update(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId,
+            @RequestBody AdminUpdateDto.Request request) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(adminId, request));
     }
 
 

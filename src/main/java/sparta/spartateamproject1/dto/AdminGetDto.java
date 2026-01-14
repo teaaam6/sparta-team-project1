@@ -25,14 +25,14 @@ public class AdminGetDto {
     @Setter
     @Builder
     public static class Response {
-        private Long id;
-        private String name;
-        private String email;
-        private String phoneNumber;
-        private Role role;
-        private AdminStatus status;
-        private LocalDateTime createdAt;
-        private LocalDateTime approvedAt;
+        private final Long id;
+        private final String name;
+        private final String email;
+        private final String phoneNumber;
+        private final Role role;
+        private final AdminStatus status;
+        private final LocalDateTime createdAt;
+        private final LocalDateTime approvedAt;
 
         public static AdminGetDto.Response fromEntity(Admin admin){
             return AdminGetDto.Response.builder()

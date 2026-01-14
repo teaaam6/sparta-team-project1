@@ -132,7 +132,13 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
+    @Override
+    public AdminUpdateDto.Response update(Long adminId, AdminUpdateDto.Request request) {
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
+        admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+        return AdminUpdateDto.Response.fromEntity(admin);
+    }
 
 
 }

@@ -49,4 +49,10 @@ public class Admin {
 
     @Embedded
     private ApprovalResult approvalResult;
+
+    public void updateAdmin(String name, String email, String phoneNumber){
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 }

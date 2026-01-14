@@ -18,4 +18,6 @@ public interface AdminService {
     List<AdminGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute);
 
     AdminGetDto.Response findOne(Long id);
+
+    AdminUpdateDto.Response update(Long adminId, AdminUpdateDto.Request request);
 }

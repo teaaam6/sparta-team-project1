@@ -65,18 +65,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public FindSelfResponseDto findSelf(Long id) {
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        LocalDateTime activeAt = admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt();
 
         return FindSelfResponseDto.builder()
-                .id(admin.getId())
                 .email(admin.getEmail())
-                .status(admin.getStatus())
-                .role(admin.getRole())
                 .name(admin.getName())
                 .phoneNumber(admin.getPhoneNumber())
-                .createdAt(admin.getCreatedAt())
-                .activeAt(activeAt)
-                .updatedAt(admin.getModifiedAt())
                 .build();
     }
 

@@ -11,13 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class FindSelfResponseDto {
-    private Long id;
     private String name;
     private String email;
     private String phoneNumber;
-    private Role role;
-    private AdminStatus status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime activeAt;
 }

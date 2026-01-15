@@ -12,17 +12,8 @@ import java.time.LocalDateTime;
 
 public class AdminGetDto {
 
-    @Getter
-    public static class Request {
-        private Long id;
-        String name;
-        String email;
-        String role;
-        String status;
-    }
 
     @Getter
-    @Setter
     @Builder
     public static class Response {
         private final Long id;

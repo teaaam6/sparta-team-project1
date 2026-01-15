@@ -74,15 +74,14 @@ public class AdminController {
 //        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute, pageable, request));
 //    }
     @GetMapping("/admins")
-    public ResponseEntity<List<AdminGetDto.Response>> getAll(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute));
+    public ResponseEntity<List<AdminGetDto.Response>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll());
 
     }
 
     //관리자 단건 조회
     @GetMapping("/admins/{adminId}")
     public ResponseEntity<AdminGetDto.Response> getOne(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(adminId));
 

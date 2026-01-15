@@ -15,7 +15,7 @@ public interface AdminService {
     //Todo
     //List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto request);
 
-    List<AdminGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute);
+    List<AdminGetDto.Response> findAll();
 
     AdminGetDto.Response findOne(Long id);
 

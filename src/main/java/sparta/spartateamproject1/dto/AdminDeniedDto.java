@@ -14,7 +14,7 @@ public class AdminDeniedDto {
     @Getter
     public static class DeniedRequest {
 
-        @NotBlank(message = "권한을 설정해주세요.")
+        @NotBlank(message = "승인 거절 사유를 작성해주세요.")
         public String deniedReason;
 
     }

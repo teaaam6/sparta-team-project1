@@ -119,23 +119,61 @@ public class AdminServiceImpl implements AdminService {
     //id 는 슈퍼관리자의 아이디
     //adminId 는 수정할 관리자의 아이디
     public AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request) {
-        //슈퍼관리자 또는 자기자신인지 확인
+        //슈퍼관리자인지 확인
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
         admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
         return AdminUpdateDto.Response.fromEntity(admin);
     }
 
+    //관리자 역할 변경
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 수정할 관리자의 아이디
+    @Override
+    public AdminUpdateDto.RoleResponse updateRole(Long id, Long adminId, AdminUpdateDto.RoleRequest request) {
+        //슈퍼관리자인지 확인
+        Admin superAdmin = checkSuperAdmin(id);
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+
+        System.out.println("===================admin.getEmail() = " + admin.getEmail());
+
+        admin.updateRole(request.getRole());
+
+        System.out.println("===================admin.getEmail() = " + admin.getEmail());
+        return AdminUpdateDto.RoleResponse.fromEntity(admin);
+    }
+
+    //관리자 상태 변경
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 수정할 관리자의 아이디
+    @Override
+    @Transactional
+    public AdminUpdateDto.StatusResponse updateStatus(Long id, Long adminId, AdminUpdateDto.StatusRequest request) {
+        //슈퍼관리자인지 확인
+        Admin superAdmin = checkSuperAdmin(id);
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+
+        admin.updateStatus(request.getStatus());
+        return AdminUpdateDto.StatusResponse.fromEntity(admin);
+    }
+
+    @Override
+    public AdminUpdateDto.PasswordResponse updatePassword(Long id, Long adminId, AdminUpdateDto.PasswordRequest request) {
+        return null;
+    }
+
+
+    //관리자 삭제
     @Override
     @Transactional
     //id 는 슈퍼관리자의 아이디
     //adminId 는 삭제할 관리자의 아이디
     public void delete(Long id, Long adminId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin admin = checkSuperAdmin(id);
-        boolean exists = adminRepository.existsById(adminId);
-        if(!exists) {
-            throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
+        Admin superAdmin = checkSuperAdmin(id);
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        if(admin.getRole().equals(Role.SUPER_ADMIN)){
+            throw new ForbiddenException("슈퍼관리자는 삭제할 수 없습니다.");
         }
         adminRepository.deleteById(adminId);
     }
@@ -187,6 +225,10 @@ public class AdminServiceImpl implements AdminService {
 
         return UpdateSelfDto.Response.fromEntity(admin);
     }
+
+    //관리자 자신의 비밀번호 변경
+
+
 
     //이 아이디가 슈퍼관리자인지 확인 후 권한이 없다면 throw
     public Admin checkSuperAdmin(Long id) {

@@ -27,4 +27,10 @@ public interface AdminService {
     AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request);
 
     UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request);
+
+    AdminUpdateDto.RoleResponse updateRole(Long id, Long adminId, AdminUpdateDto.RoleRequest request);
+
+    AdminUpdateDto.StatusResponse updateStatus(Long id, Long adminId, AdminUpdateDto.StatusRequest request);
+
+    AdminUpdateDto.PasswordResponse updatePassword(Long id, Long adminId, AdminUpdateDto.PasswordRequest request);
 }

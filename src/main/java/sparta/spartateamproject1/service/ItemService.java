@@ -2,6 +2,8 @@ package sparta.spartateamproject1.service;
 
 import sparta.spartateamproject1.dto.ItemAddDto;
 import sparta.spartateamproject1.dto.ItemGetDto;
+import sparta.spartateamproject1.dto.ItemUpdateDto;
+import sparta.spartateamproject1.dto.LoginSessionAttribute;
 
 import java.util.List;
 
@@ -17,7 +19,12 @@ public interface ItemService {
     ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req);
 
     // //수정
-    // CustomerGetDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
+    ItemUpdateDto.Response updateInfo(
+            LoginSessionAttribute attr, 
+            Long adminId, 
+            ItemUpdateDto.UpdateInfoRequest request
+    );
+
     // //삭제
     // void delete(Long id, Long adminId);
 }

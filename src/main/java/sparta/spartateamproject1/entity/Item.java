@@ -3,6 +3,7 @@ package sparta.spartateamproject1.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import sparta.spartateamproject1.type.ItemCategory;
 import sparta.spartateamproject1.type.ItemStatus;
@@ -41,7 +42,17 @@ public class Item {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    private LocalDateTime modifiedAt;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
     private Admin admin;
+
+    public void updateInfo(String name, ItemCategory category, Long price) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+    }
 }

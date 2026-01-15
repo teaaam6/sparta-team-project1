@@ -2,13 +2,9 @@ package sparta.spartateamproject1.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import sparta.spartateamproject1.type.ItemCategory;
 import sparta.spartateamproject1.type.ItemStatus;
-
-import java.time.LocalDateTime;
 
 // TODO : 잘못된 enum의 경우 spring은 
 // org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot deserialize value of type

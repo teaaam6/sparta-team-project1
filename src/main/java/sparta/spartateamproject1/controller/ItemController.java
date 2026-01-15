@@ -36,5 +36,18 @@ public class ItemController {
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.findOne(itemId));
     }
+
+    @PostMapping("/items/{itemId}/info")
+    public ResponseEntity<ItemUpdateDto.Response> updateInfo(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId,
+        @Valid @RequestBody ItemUpdateDto.UpdateInfoRequest req
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateInfo(
+            loginSessionAttribute,
+            itemId,
+            req
+        ));
+    }
 }
 

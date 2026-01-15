@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
+import sparta.spartateamproject1.type.AdminStatus;
 import sparta.spartateamproject1.entity.Item;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.repository.ItemRepository;
@@ -29,10 +30,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req) {
-        // 일단 이 상품을 등록하고 싶은 admin이 있는지 확인한다
-        Admin admin = adminRepository.findById(adminId).orElseThrow(
-            () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")
-        );
+        Admin admin = getAdminIfExistsAndActive(adminId);
 
         // 상품 등록 가는한 admin인지 확인
         if (!(admin.getRole() == Role.SUPER_ADMIN || admin.getRole() == Role.ADMIN)) {
@@ -69,5 +67,43 @@ public class ItemServiceImpl implements ItemService {
             () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
         return ItemGetDto.Response.fromEntity(item);
+    }
+
+    @Override
+    @Transactional
+    public ItemUpdateDto.Response updateInfo(
+        LoginSessionAttribute attr,
+        Long itemId,
+        ItemUpdateDto.UpdateInfoRequest req
+    ) {
+        // 제 생각에 모든 admin이 수정이 가능 할거라 생각하지만,
+        // 혹시 admin이 비활성이거나 정지된 admin일 경우를 대비하여
+        // 체크를 하는 것이 맞다고 생각합니다.
+        getAdminIfExistsAndActive(attr.getId());
+
+        Item item = itemRepository.findById(itemId).orElseThrow(
+            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+
+        item.updateInfo(req.getName(), req.getCategory(), req.getPrice());
+
+        // JpaAuditing을 강제로 트리거
+        item = itemRepository.saveAndFlush(item);
+
+        return ItemUpdateDto.Response.fromEntity(item);
+    }
+
+    public Admin getAdminIfExistsAndActive(Long adminId) {
+        // 일단 admin이 있는지 확인한다
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+            () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")
+        );
+
+        // admin 상태가 ACTIVE인지 확인
+        if (admin.getStatus() != AdminStatus.ACTIVE) {
+            throw new ForbiddenException("활성된 관리가가 아닙니다.");
+        }
+
+        return admin;
     }
 }

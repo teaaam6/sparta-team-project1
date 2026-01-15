@@ -136,9 +136,9 @@ public class ItemServiceImpl implements ItemService {
         // TODO: item 삭제를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(attr.getId());
 
-        Item item = itemRepository.findById(itemId).orElseThrow(
-            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
-        );
+        if (!itemRepository.existsById(itemId)) {
+            throw new ItemNotFoundException("존재하지 않는 상품 입니다.");
+        }
 
         itemRepository.deleteById(itemId);
     }

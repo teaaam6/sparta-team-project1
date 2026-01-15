@@ -11,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 import sparta.spartateamproject1.config.PasswordEncoder;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.entity.ApprovalResult;
+import sparta.spartateamproject1.entity.Customer;
 import sparta.spartateamproject1.repository.AdminRepository;
+import sparta.spartateamproject1.repository.CustomerRepository;
 import sparta.spartateamproject1.type.AdminStatus;
+import sparta.spartateamproject1.type.CustomerStatus;
 import sparta.spartateamproject1.type.Role;
 
 @Component
@@ -27,7 +30,8 @@ public class TestSuperAdminAdder implements CommandLineRunner {
     private final AdminRepository adminRepository;
 
     private final PasswordEncoder passwordEncoder;
-    
+    private final CustomerRepository customerRepository;
+
     @Override
     public void run(String... args) throws Exception {
         ApprovalResult result = new ApprovalResult("", null, LocalDateTime.now(), true);
@@ -56,5 +60,19 @@ public class TestSuperAdminAdder implements CommandLineRunner {
                 .approvalResult(result)
                 .build();
         adminRepository.save(activeAdmin);
+
+        // 고객 데이터를 db에 저장해둠
+        for (int i = 1; i <= 30; i++) {
+            CustomerStatus cs;
+            if (i % 3 == 1) {
+                cs = CustomerStatus.ACTIVE;
+            } else if (i % 3 == 2) {
+                cs = CustomerStatus.INACTIVE;
+            } else {
+                cs = CustomerStatus.STOP;
+            }
+            Customer customer = new Customer("customer" + i, "customer" + i + "@gmail.com", "010-1234-1234", cs, LocalDateTime.now());
+            customerRepository.save(customer);
+        }
     }
 }

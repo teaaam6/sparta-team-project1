@@ -33,8 +33,6 @@ public class AdminController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest httpServletRequest) {
         LoginSessionAttribute loginSessionAttribute = adminService.login(requestDto);
 
-        // 기존 세션 있으면 제거
-        httpServletRequest.getSession().invalidate();
         // 새로운 세션 생성
         HttpSession session = httpServletRequest.getSession(true);
         session.setAttribute("adminSession", loginSessionAttribute);

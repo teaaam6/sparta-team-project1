@@ -43,13 +43,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(SamePasswordException.class)
-    public ResponseEntity<?> handleSamePasswordException(SamePasswordException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<?> handleItemNotFoundException(ItemNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<?> handleInvalidPasswordException(InvalidPasswordException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
 }

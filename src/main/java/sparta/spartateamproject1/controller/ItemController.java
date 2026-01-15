@@ -29,5 +29,63 @@ public class ItemController {
     public ResponseEntity<List<ItemGetDto.Response>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll());
     }
+
+    @GetMapping("/items/{itemId}")
+    public ResponseEntity<ItemGetDto.Response> getOne(
+        @PathVariable Long itemId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.findOne(itemId));
+    }
+
+    @PatchMapping("/items/{itemId}/info")
+    public ResponseEntity<ItemUpdateInfoDto.Response> updateInfo(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId,
+        @Valid @RequestBody ItemUpdateInfoDto.Request req
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateInfo(
+            loginSessionAttribute,
+            itemId,
+            req
+        ));
+    }
+
+    @PatchMapping("/items/{itemId}/stock")
+    public ResponseEntity<ItemUpdateStockDto.Response> updateStock(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId,
+        @Valid @RequestBody ItemUpdateStockDto.Request req
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStock(
+            loginSessionAttribute,
+            itemId,
+            req
+        ));
+    }
+
+    @PatchMapping("/items/{itemId}/status")
+    public ResponseEntity<ItemUpdateStatusDto.Response> updateStatus(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId,
+        @Valid @RequestBody ItemUpdateStatusDto.Request req
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStatus(
+            loginSessionAttribute,
+            itemId,
+            req
+        ));
+    }
+
+    @DeleteMapping("/items/{itemId}")
+    public ResponseEntity<Void> delete(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId
+    ) {
+        itemService.delete(
+            loginSessionAttribute,
+            itemId
+        );
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
 

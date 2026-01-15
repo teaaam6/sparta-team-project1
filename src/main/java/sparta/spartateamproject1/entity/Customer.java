@@ -9,10 +9,7 @@ import sparta.spartateamproject1.type.CustomerStatus;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "customers")
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -37,10 +34,17 @@ public class Customer {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public void updateStatus(CustomerStatus status){
+    public Customer(String name, String email, String phoneNumber, CustomerStatus status, LocalDateTime createdAt) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
+    public void updateStatus(CustomerStatus status) {
+        this.status = status;
+    }
 
     public void updateCustomer(String name, String email, String phoneNumber) {
         this.name = name;

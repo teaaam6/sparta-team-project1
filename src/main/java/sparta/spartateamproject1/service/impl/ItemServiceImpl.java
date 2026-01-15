@@ -100,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateDto.UpdateStockRequest req
     ) {
-        // TODO: item 재고 관리를 가지고 있는 관리자는 누구일까요?
+        // TODO: item 재고 관리를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(attr.getId());
 
         Item item = itemRepository.findById(itemId).orElseThrow(
@@ -108,6 +108,28 @@ public class ItemServiceImpl implements ItemService {
         );
 
         item.updateStock(req.getStock());
+
+        // JpaAuditing을 강제로 트리거
+        item = itemRepository.saveAndFlush(item);
+
+        return ItemUpdateDto.Response.fromEntity(item);
+    }
+
+    @Override
+    @Transactional
+    public ItemUpdateDto.Response updateStatus(
+        LoginSessionAttribute attr,
+        Long itemId,
+        ItemUpdateDto.UpdateStatusRequest req
+    ) {
+        // TODO: item 상태 관리를 할수있는 관리자는 누구일까요?
+        getAdminIfExistsAndActive(attr.getId());
+
+        Item item = itemRepository.findById(itemId).orElseThrow(
+            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+
+        item.updateStatus(req.getStatus());
 
         // JpaAuditing을 강제로 트리거
         item = itemRepository.saveAndFlush(item);

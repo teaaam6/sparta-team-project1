@@ -62,5 +62,18 @@ public class ItemController {
             req
         ));
     }
+
+    @PostMapping("/items/{itemId}/status")
+    public ResponseEntity<ItemUpdateDto.Response> updateStatus(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId,
+        @Valid @RequestBody ItemUpdateDto.UpdateStatusRequest req
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStatus(
+            loginSessionAttribute,
+            itemId,
+            req
+        ));
+    }
 }
 

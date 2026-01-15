@@ -32,6 +32,13 @@ public interface ItemService {
             ItemUpdateDto.UpdateStockRequest request
     );
 
+    // 상태 수정
+    ItemUpdateDto.Response updateStatus(
+            LoginSessionAttribute attr, 
+            Long itemId, 
+            ItemUpdateDto.UpdateStatusRequest request
+    );
+
     // //삭제
     // void delete(Long id, Long adminId);
 }

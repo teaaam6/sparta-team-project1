@@ -29,6 +29,12 @@ public class ItemUpdateDto {
 
     @Getter
     @Builder
+    public static class UpdateStatusRequest {
+        private ItemStatus status;
+    }
+
+    @Getter
+    @Builder
     public static class Response {
         private final Long id;
         private final String name;

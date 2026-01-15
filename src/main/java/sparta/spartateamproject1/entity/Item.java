@@ -66,4 +66,8 @@ public class Item {
             }
         }
     }
+
+    public void updateStatus(ItemStatus status) {
+        this.status = status;
+    }
 }

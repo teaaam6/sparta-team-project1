@@ -38,10 +38,10 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/info")
-    public ResponseEntity<ItemUpdateDto.Response> updateInfo(
+    public ResponseEntity<ItemUpdateInfoDto.Response> updateInfo(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,
-        @Valid @RequestBody ItemUpdateDto.UpdateInfoRequest req
+        @Valid @RequestBody ItemUpdateInfoDto.Request req
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateInfo(
             loginSessionAttribute,
@@ -51,10 +51,10 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/stock")
-    public ResponseEntity<ItemUpdateDto.Response> updateStock(
+    public ResponseEntity<ItemUpdateStockDto.Response> updateStock(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,
-        @Valid @RequestBody ItemUpdateDto.UpdateStockRequest req
+        @Valid @RequestBody ItemUpdateStockDto.Request req
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStock(
             loginSessionAttribute,
@@ -64,10 +64,10 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/status")
-    public ResponseEntity<ItemUpdateDto.Response> updateStatus(
+    public ResponseEntity<ItemUpdateStatusDto.Response> updateStatus(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,
-        @Valid @RequestBody ItemUpdateDto.UpdateStatusRequest req
+        @Valid @RequestBody ItemUpdateStatusDto.Request req
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStatus(
             loginSessionAttribute,

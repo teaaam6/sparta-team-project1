@@ -71,10 +71,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemUpdateDto.Response updateInfo(
+    public ItemUpdateInfoDto.Response updateInfo(
         LoginSessionAttribute attr,
         Long itemId,
-        ItemUpdateDto.UpdateInfoRequest req
+        ItemUpdateInfoDto.Request req
     ) {
         // 제 생각에 모든 admin이 수정이 가능 할거라 생각하지만,
         // 혹시 admin이 비활성이거나 정지된 admin일 경우를 대비하여
@@ -87,18 +87,15 @@ public class ItemServiceImpl implements ItemService {
 
         item.updateInfo(req.getName(), req.getCategory(), req.getPrice());
 
-        // JpaAuditing을 강제로 트리거
-        item = itemRepository.saveAndFlush(item);
-
-        return ItemUpdateDto.Response.fromEntity(item);
+        return ItemUpdateInfoDto.Response.fromEntity(item);
     }
 
     @Override
     @Transactional
-    public ItemUpdateDto.Response updateStock(
+    public ItemUpdateStockDto.Response updateStock(
         LoginSessionAttribute attr,
         Long itemId,
-        ItemUpdateDto.UpdateStockRequest req
+        ItemUpdateStockDto.Request req
     ) {
         // TODO: item 재고 관리를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(attr.getId());
@@ -109,18 +106,15 @@ public class ItemServiceImpl implements ItemService {
 
         item.updateStock(req.getStock());
 
-        // JpaAuditing을 강제로 트리거
-        item = itemRepository.saveAndFlush(item);
-
-        return ItemUpdateDto.Response.fromEntity(item);
+        return ItemUpdateStockDto.Response.fromEntity(item);
     }
 
     @Override
     @Transactional
-    public ItemUpdateDto.Response updateStatus(
+    public ItemUpdateStatusDto.Response updateStatus(
         LoginSessionAttribute attr,
         Long itemId,
-        ItemUpdateDto.UpdateStatusRequest req
+        ItemUpdateStatusDto.Request req
     ) {
         // TODO: item 상태 관리를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(attr.getId());
@@ -131,10 +125,7 @@ public class ItemServiceImpl implements ItemService {
 
         item.updateStatus(req.getStatus());
 
-        // JpaAuditing을 강제로 트리거
-        item = itemRepository.saveAndFlush(item);
-
-        return ItemUpdateDto.Response.fromEntity(item);
+        return ItemUpdateStatusDto.Response.fromEntity(item);
     }
 
     public Admin getAdminIfExistsAndActive(Long adminId) {

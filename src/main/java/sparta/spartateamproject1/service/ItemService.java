@@ -2,7 +2,9 @@ package sparta.spartateamproject1.service;
 
 import sparta.spartateamproject1.dto.ItemAddDto;
 import sparta.spartateamproject1.dto.ItemGetDto;
-import sparta.spartateamproject1.dto.ItemUpdateDto;
+import sparta.spartateamproject1.dto.ItemUpdateInfoDto;
+import sparta.spartateamproject1.dto.ItemUpdateStockDto;
+import sparta.spartateamproject1.dto.ItemUpdateStatusDto;
 import sparta.spartateamproject1.dto.LoginSessionAttribute;
 
 import java.util.List;
@@ -19,24 +21,24 @@ public interface ItemService {
     ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req);
 
     // 정보 수정
-    ItemUpdateDto.Response updateInfo(
+    ItemUpdateInfoDto.Response updateInfo(
             LoginSessionAttribute attr, 
             Long itemId, 
-            ItemUpdateDto.UpdateInfoRequest request
+            ItemUpdateInfoDto.Request request
     );
 
     // 재고 수정
-    ItemUpdateDto.Response updateStock(
+    ItemUpdateStockDto.Response updateStock(
             LoginSessionAttribute attr, 
             Long itemId, 
-            ItemUpdateDto.UpdateStockRequest request
+            ItemUpdateStockDto.Request request
     );
 
     // 상태 수정
-    ItemUpdateDto.Response updateStatus(
+    ItemUpdateStatusDto.Response updateStatus(
             LoginSessionAttribute attr, 
             Long itemId, 
-            ItemUpdateDto.UpdateStatusRequest request
+            ItemUpdateStatusDto.Request request
     );
 
     // //삭제

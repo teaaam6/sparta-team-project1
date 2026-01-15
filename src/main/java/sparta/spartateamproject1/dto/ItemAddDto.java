@@ -27,7 +27,7 @@ public class ItemAddDto {
 
         private ItemCategory category;
 
-        @PositiveOrZero(message = "제품 가격은 0 미만여서는 않됩니다.")
+        @Positive(message = "제품 가격은 0 이하여서는 않됩니다.")
         private Long price;
 
         @PositiveOrZero(message = "제품 재고는 0 미만여서는 않됩니다.")

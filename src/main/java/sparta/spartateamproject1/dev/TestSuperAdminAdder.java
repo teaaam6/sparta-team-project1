@@ -45,5 +45,17 @@ public class TestSuperAdminAdder implements CommandLineRunner {
             .build();
 
         adminRepository.save(superAdmin);
+
+        // 활성 상태인 어드민 계정 생성
+        Admin activeAdmin = Admin.builder()
+                .name("activeUser")
+                .email("active1@gmail.com")
+                .password(passwordEncoder.encode("active1"))
+                .phoneNumber("010-1234-5678")
+                .role(Role.ADMIN)
+                .status(AdminStatus.ACTIVE)
+                .approvalResult(result)
+                .build();
+        adminRepository.save(activeAdmin);
     }
 }

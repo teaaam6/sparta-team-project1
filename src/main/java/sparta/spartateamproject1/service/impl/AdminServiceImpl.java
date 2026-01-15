@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new LoginException("회원가입된 이메일이 아닙니다."));
 
         if (!admin.getStatus().equals(AdminStatus.ACTIVE)) {
-            throw new LoginException("계정이 활성 상태가 아닙니다.");
+            throw new LoginException("계정이 " + admin.getStatus().name() + " 상태입니다.");
         }
 
         if (passwordEncoder.matches(requestDto.getPassword(), admin.getPassword())) {

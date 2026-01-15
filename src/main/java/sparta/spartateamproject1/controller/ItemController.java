@@ -75,5 +75,17 @@ public class ItemController {
             req
         ));
     }
+
+    @DeleteMapping("/items/{itemId}")
+    public ResponseEntity<Void> delete(
+        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long itemId
+    ) {
+        itemService.delete(
+            loginSessionAttribute,
+            itemId
+        );
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
 

@@ -127,6 +127,22 @@ public class ItemServiceImpl implements ItemService {
         return ItemUpdateStatusDto.Response.fromEntity(item);
     }
 
+    @Override
+    @Transactional
+    public void delete(
+        LoginSessionAttribute attr,
+        Long itemId
+    ) {
+        // TODO: item 삭제를 할수있는 관리자는 누구일까요?
+        getAdminIfExistsAndActive(attr.getId());
+
+        Item item = itemRepository.findById(itemId).orElseThrow(
+            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
+        );
+
+        itemRepository.deleteById(itemId);
+    }
+
     private Admin getAdminIfExistsAndActive(Long adminId) {
         // 일단 admin이 있는지 확인한다
         Admin admin = adminRepository.findById(adminId).orElseThrow(

@@ -41,6 +41,9 @@ public interface ItemService {
             ItemUpdateStatusDto.Request request
     );
 
-    // //삭제
-    // void delete(Long id, Long adminId);
+    // 삭제
+    void delete(
+            LoginSessionAttribute attr, 
+            Long itemId
+    );
 }

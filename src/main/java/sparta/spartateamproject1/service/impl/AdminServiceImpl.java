@@ -53,7 +53,10 @@ public class AdminServiceImpl implements AdminService {
     public LoginSessionAttribute login(LoginRequestDto requestDto) {
         // 먼저 이메일로 유저를 찾는다.
         Admin admin = adminRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new LoginException("회원가입된 이메일이 아닙니다."));
-        System.out.println(admin.getRole());
+
+        if (!admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            throw new LoginException("계정이 활성 상태가 아닙니다.");
+        }
 
         if (passwordEncoder.matches(requestDto.getPassword(), admin.getPassword())) {
             return new LoginSessionAttribute(admin.getId(), admin.getEmail(), admin.getRole());

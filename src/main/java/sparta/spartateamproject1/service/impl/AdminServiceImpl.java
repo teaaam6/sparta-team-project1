@@ -2,14 +2,12 @@ package sparta.spartateamproject1.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.config.PasswordEncoder;
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
+import sparta.spartateamproject1.entity.ApprovalResult;
 import sparta.spartateamproject1.exception.*;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
@@ -141,15 +139,58 @@ public class AdminServiceImpl implements AdminService {
     //adminId 는 삭제할 관리자의 아이디
     public void delete(Long id, Long adminId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-//        if(!admin.getRole().equals(Role.SUPER_ADMIN)){
-//            throw new ForbiddenException("권한이 없습니다.");
-//        }
+        Admin admin = checkSuperAdmin(id);
         boolean exists = adminRepository.existsById(adminId);
         if(!exists) {
             throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
         }
         adminRepository.deleteById(adminId);
     }
+
+    //관리자 신청 승인
+    @Override
+    @Transactional
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 승인할 관리자의 아이디
+    public AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId) {
+        //이 아이디가 슈퍼관리자인지 확인
+        Admin superAdmin = checkSuperAdmin(id);
+        //승인하려는 관리자 확인
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+
+        ApprovalResult result = new ApprovalResult("", null, LocalDateTime.now(), true);
+        admin.setApprovalResult(result);
+        admin.updateStatus(AdminStatus.ACTIVE);
+
+        return AdminApprovedDto.ApprovedResponse.fromEntity(admin);
+    }
+
+    //관리자 신청 거절
+    @Override
+    @Transactional
+    //id 는 슈퍼관리자의 아이디
+    //adminId 는 거절할 관리자의 아이디
+    public AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request) {
+        //이 아이디가 슈퍼관리자인지 확인
+        Admin superAdmin = checkSuperAdmin(id);
+        //승인하려는 관리자 확인
+        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+
+        ApprovalResult result = new ApprovalResult(request.deniedReason, LocalDateTime.now(), null, false);
+        admin.setApprovalResult(result);
+        admin.updateStatus(AdminStatus.DENIED);
+
+        return AdminDeniedDto.DeniedResponse.fromEntity(admin);
+    }
+
+    //이 아이디가 슈퍼관리자인지 확인 후 권한이 없다면 throw
+    public Admin checkSuperAdmin(Long id) {
+        Admin superAdmin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        if(!superAdmin.getRole().equals(Role.SUPER_ADMIN)){
+            throw new ForbiddenException("권한이 없습니다.");
+        }
+        return superAdmin;
+    }
+
 
 }

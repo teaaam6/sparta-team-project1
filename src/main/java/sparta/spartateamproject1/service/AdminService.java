@@ -1,6 +1,5 @@
 package sparta.spartateamproject1.service;
 
-import org.springframework.data.domain.Pageable;
 import sparta.spartateamproject1.dto.*;
 
 import java.util.List;
@@ -22,4 +21,8 @@ public interface AdminService {
     AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
 
     void delete(Long id, Long adminId);
+
+    AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId);
+
+    AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request);
 }

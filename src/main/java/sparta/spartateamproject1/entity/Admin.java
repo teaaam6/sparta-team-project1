@@ -55,4 +55,8 @@ public class Admin {
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
+
+    public void updateStatus(AdminStatus status){
+        this.status = status;
+    }
 }

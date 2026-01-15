@@ -4,14 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sparta.spartateamproject1.dto.*;
-import sparta.spartateamproject1.exception.IllegalNumberException;
 import sparta.spartateamproject1.service.AdminService;
 
 import java.util.List;
@@ -104,6 +100,25 @@ public class AdminController {
             @PathVariable Long adminId) {
         adminService.delete(loginSessionAttribute.getId(), adminId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    //관리자 신청 승인
+    //adminId: 승인할 관리자
+    @PostMapping("/admins/{adminId}/approve")
+    public ResponseEntity<AdminApprovedDto.ApprovedResponse> approve(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.approve(loginSessionAttribute.getId(), adminId));
+    }
+
+    //관리자 신청 거절
+    //adminId: 거절할 관리자
+    @PostMapping("/admins/{adminId}/deny")
+    public ResponseEntity<AdminDeniedDto.DeniedResponse> denied(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestBody AdminDeniedDto.DeniedRequest request,
+            @PathVariable Long adminId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(loginSessionAttribute.getId(), adminId, request));
     }
 
 }

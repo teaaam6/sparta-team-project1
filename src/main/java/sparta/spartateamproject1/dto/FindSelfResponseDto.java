@@ -8,7 +8,6 @@ import sparta.spartateamproject1.type.Role;
 
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
 @Builder
 public class FindSelfResponseDto {

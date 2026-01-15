@@ -14,8 +14,7 @@ import sparta.spartateamproject1.service.ItemService;
 import sparta.spartateamproject1.type.Role;
 import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.ForbiddenException;
-import sparta.spartateamproject1.type.ErrorCode;
-import sparta.spartateamproject1.exception.CustomException;
+import sparta.spartateamproject1.exception.ItemNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemGetDto.Response findOne(Long id) {
         Item item = itemRepository.findById(id).orElseThrow(
-            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
         return ItemGetDto.Response.fromEntity(item);
     }
@@ -82,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
         getAdminIfExistsAndActive(attr.getId());
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
 
         item.updateInfo(req.getName(), req.getCategory(), req.getPrice());
@@ -101,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
         getAdminIfExistsAndActive(attr.getId());
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
 
         item.updateStock(req.getStock());
@@ -120,7 +119,7 @@ public class ItemServiceImpl implements ItemService {
         getAdminIfExistsAndActive(attr.getId());
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+            () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
 
         item.updateStatus(req.getStatus());

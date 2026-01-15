@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemUpdateStatusDto.Response.fromEntity(item);
     }
 
-    public Admin getAdminIfExistsAndActive(Long adminId) {
+    private Admin getAdminIfExistsAndActive(Long adminId) {
         // 일단 admin이 있는지 확인한다
         Admin admin = adminRepository.findById(adminId).orElseThrow(
             () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")

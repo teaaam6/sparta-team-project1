@@ -30,9 +30,8 @@ public class TestSuperAdminAdder implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
-        ApprovalResult result = new ApprovalResult();
-        result.setApprovedAt(LocalDateTime.now());
-        result.setIsApproved(true);
+        ApprovalResult result = new ApprovalResult("", null, LocalDateTime.now(), true);
+//
 
         Admin superAdmin = Admin.builder()
             .name("super")

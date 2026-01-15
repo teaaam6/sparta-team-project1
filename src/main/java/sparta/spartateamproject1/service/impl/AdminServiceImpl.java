@@ -157,11 +157,6 @@ public class AdminServiceImpl implements AdminService {
         return AdminUpdateDto.StatusResponse.fromEntity(admin);
     }
 
-    @Override
-    public AdminUpdateDto.PasswordResponse updatePassword(Long id, Long adminId, AdminUpdateDto.PasswordRequest request) {
-        return null;
-    }
-
 
     //관리자 삭제
     @Override
@@ -226,7 +221,34 @@ public class AdminServiceImpl implements AdminService {
         return UpdateSelfDto.Response.fromEntity(admin);
     }
 
-    //관리자 자신의 비밀번호 변경
+    //관리자 비밀번호 변경
+    //id 는 비밀번호 변경을 요청한 관리자의 아이디
+    //adminId 는 비밀번호가 바뀔 관리자의 아이디
+    @Override
+    @Transactional
+    public AdminUpdateDto.PasswordResponse updatePassword(Long id, Long adminId, AdminUpdateDto.PasswordRequest request) {
+
+        Admin requestAdmin = adminRepository.findById(id).orElseThrow(()-> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Admin targetAdmin = adminRepository.findById(adminId).orElseThrow(()-> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        //요청자가 슈퍼관리자 또는 자기자신인지 확인
+        //요청자가 슈퍼관리자도 아니고 자기자신도 아니라면 오류발생
+        if(! requestAdmin.getRole().equals(Role.SUPER_ADMIN) && !id.equals(adminId)){
+            throw new ForbiddenException("권한이 없습니다.");
+        }
+        //현재 비밀번호가 맞는지 확인 후 맞으면 수정, 틀리면 오류
+        if(!passwordEncoder.matches(request.getOldPassword(), targetAdmin.getPassword())) {
+            throw new InvalidPasswordException("비밀번호가 다릅니다.");
+        }
+
+        //바꿀 비밀번호와 현재 비밀번호가 같다면 오류
+        if(passwordEncoder.matches(request.getNewPassword(), targetAdmin.getPassword())) {
+            throw new SamePasswordException("동일한 비밀번호로 바꿀 수 없습니다.");
+        }
+        String password = passwordEncoder.encode(request.getNewPassword());
+        targetAdmin.updatePassword(password);
+
+        return AdminUpdateDto.PasswordResponse.success("비밀번호 변경이 완료되었습니다.");
+    }
 
 
 

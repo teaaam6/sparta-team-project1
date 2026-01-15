@@ -106,8 +106,15 @@ public class AdminUpdateDto {
     }
 
     @Getter
+    @Builder
     public static class PasswordResponse {
-        private String message;
+        private final String message;
+
+        public static AdminUpdateDto.PasswordResponse success(String message){
+            return AdminUpdateDto.PasswordResponse.builder()
+                    .message(message)
+                    .build();
+        }
     }
 
 }

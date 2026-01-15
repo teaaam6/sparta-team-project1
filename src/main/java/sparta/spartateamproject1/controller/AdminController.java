@@ -145,7 +145,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
     }
 
-    //관리자 자신 비밀번호 변경
+    //관리자 비밀번호 변경
     @PatchMapping("/admins/{adminId}/password")
     public ResponseEntity<AdminUpdateDto.PasswordResponse> updatePassword(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,

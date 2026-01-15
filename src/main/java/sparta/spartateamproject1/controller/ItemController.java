@@ -37,7 +37,7 @@ public class ItemController {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.findOne(itemId));
     }
 
-    @PostMapping("/items/{itemId}/info")
+    @PatchMapping("/items/{itemId}/info")
     public ResponseEntity<ItemUpdateInfoDto.Response> updateInfo(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,
@@ -50,7 +50,7 @@ public class ItemController {
         ));
     }
 
-    @PostMapping("/items/{itemId}/stock")
+    @PatchMapping("/items/{itemId}/stock")
     public ResponseEntity<ItemUpdateStockDto.Response> updateStock(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,
@@ -63,7 +63,7 @@ public class ItemController {
         ));
     }
 
-    @PostMapping("/items/{itemId}/status")
+    @PatchMapping("/items/{itemId}/status")
     public ResponseEntity<ItemUpdateStatusDto.Response> updateStatus(
         @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
         @PathVariable Long itemId,

@@ -21,10 +21,12 @@ public class ItemUpdateStockDto {
     @Builder
     public static class Response {
         private final Long stock;
+        private final ItemStatus status;
 
         public static ItemUpdateStockDto.Response fromEntity(Item item){
             return ItemUpdateStockDto.Response.builder()
                     .stock(item.getStock())
+                    .status(item.getStatus())
                     .build();
         }
     }

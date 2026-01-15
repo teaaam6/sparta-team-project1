@@ -25,4 +25,6 @@ public interface AdminService {
     AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId);
 
     AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request);
+
+    UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request);
 }

@@ -125,9 +125,6 @@ public class AdminServiceImpl implements AdminService {
     public AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request) {
         //슈퍼관리자 또는 자기자신인지 확인
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-//        if(!admin.getRole().equals(Role.SUPER_ADMIN)){
-//            throw new ForbiddenException("권한이 없습니다.");
-//        }
 
         admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
         return AdminUpdateDto.Response.fromEntity(admin);
@@ -183,6 +180,18 @@ public class AdminServiceImpl implements AdminService {
         return AdminDeniedDto.DeniedResponse.fromEntity(admin);
     }
 
+    //관리자 자신의 정보수정
+    @Override
+    @Transactional
+    public UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request) {
+
+        //정보 업데이트
+        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+
+        return UpdateSelfDto.Response.fromEntity(admin);
+    }
+
     //이 아이디가 슈퍼관리자인지 확인 후 권한이 없다면 throw
     public Admin checkSuperAdmin(Long id) {
         Admin superAdmin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
@@ -191,6 +200,5 @@ public class AdminServiceImpl implements AdminService {
         }
         return superAdmin;
     }
-
 
 }

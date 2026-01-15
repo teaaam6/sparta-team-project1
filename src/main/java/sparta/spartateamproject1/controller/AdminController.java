@@ -121,4 +121,14 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(loginSessionAttribute.getId(), adminId, request));
     }
 
+    //관리자 자신정보 수정
+    @PatchMapping("/admins/self")
+    public ResponseEntity<UpdateSelfDto.Response> updateSelf(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestBody UpdateSelfDto.Request request) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
+    }
+
+    //관리자 자신 비밀번호 변경
+
 }

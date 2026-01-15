@@ -29,5 +29,12 @@ public class ItemController {
     public ResponseEntity<List<ItemGetDto.Response>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll());
     }
+
+    @GetMapping("/items/{itemId}")
+    public ResponseEntity<ItemGetDto.Response> getOne(
+        @PathVariable Long itemId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.findOne(itemId));
+    }
 }
 

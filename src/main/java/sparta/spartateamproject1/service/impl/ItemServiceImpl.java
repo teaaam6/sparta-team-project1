@@ -13,8 +13,9 @@ import sparta.spartateamproject1.service.ItemService;
 import sparta.spartateamproject1.type.Role;
 import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.ForbiddenException;
+import sparta.spartateamproject1.type.ErrorCode;
+import sparta.spartateamproject1.exception.CustomException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
 
         // 상품 등록 가는한 admin인지 확인
         if (!(admin.getRole() == Role.SUPER_ADMIN || admin.getRole() == Role.ADMIN)) {
-            throw new ForbiddenException("상품은 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
+            throw new ForbiddenException("상품 추가는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
         }
 
         Item item = Item.builder()
@@ -52,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemGetDto.Response.fromEntity(item);
     }
 
+    @Override
     public List<ItemGetDto.Response> findAll() {
         List<Item> items = itemRepository.findAll();
         List<ItemGetDto.Response> dtos = new ArrayList<>();
@@ -59,5 +61,13 @@ public class ItemServiceImpl implements ItemService {
             dtos.add(ItemGetDto.Response.fromEntity(item));
         }
         return dtos;
+    }
+
+    @Override
+    public ItemGetDto.Response findOne(Long id) {
+        Item item = itemRepository.findById(id).orElseThrow(
+            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+        return ItemGetDto.Response.fromEntity(item);
     }
 }

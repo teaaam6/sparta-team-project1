@@ -134,12 +134,8 @@ public class AdminServiceImpl implements AdminService {
         //슈퍼관리자인지 확인
         Admin superAdmin = checkSuperAdmin(id);
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-
-        System.out.println("===================admin.getEmail() = " + admin.getEmail());
-
         admin.updateRole(request.getRole());
 
-        System.out.println("===================admin.getEmail() = " + admin.getEmail());
         return AdminUpdateDto.RoleResponse.fromEntity(admin);
     }
 

@@ -55,4 +55,15 @@ public class Item {
         this.category = category;
         this.price = price;
     }
+
+    public void updateStock(Long stock) {
+        this.stock = stock;
+
+        // item상태가 단종이 아닐 경우 자동으로 업데이트 합니다.
+        if (this.status != ItemStatus.DISCONTINUED) {
+            if (this.stock <= 0) {
+                this.status = ItemStatus.SOLD_OUT;
+            }
+        }
+    }
 }

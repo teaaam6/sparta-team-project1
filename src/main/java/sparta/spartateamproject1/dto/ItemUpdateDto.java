@@ -22,6 +22,13 @@ public class ItemUpdateDto {
 
     @Getter
     @Builder
+    public static class UpdateStockRequest {
+        @PositiveOrZero(message = "제품 재고는 0 미만여서는 않됩니다.")
+        private Long stock;
+    }
+
+    @Getter
+    @Builder
     public static class Response {
         private final Long id;
         private final String name;

@@ -93,6 +93,28 @@ public class ItemServiceImpl implements ItemService {
         return ItemUpdateDto.Response.fromEntity(item);
     }
 
+    @Override
+    @Transactional
+    public ItemUpdateDto.Response updateStock(
+        LoginSessionAttribute attr,
+        Long itemId,
+        ItemUpdateDto.UpdateStockRequest req
+    ) {
+        // TODO: item 재고 관리를 가지고 있는 관리자는 누구일까요?
+        getAdminIfExistsAndActive(attr.getId());
+
+        Item item = itemRepository.findById(itemId).orElseThrow(
+            () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+
+        item.updateStock(req.getStock());
+
+        // JpaAuditing을 강제로 트리거
+        item = itemRepository.saveAndFlush(item);
+
+        return ItemUpdateDto.Response.fromEntity(item);
+    }
+
     public Admin getAdminIfExistsAndActive(Long adminId) {
         // 일단 admin이 있는지 확인한다
         Admin admin = adminRepository.findById(adminId).orElseThrow(

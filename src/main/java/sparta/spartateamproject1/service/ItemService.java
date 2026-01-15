@@ -18,11 +18,18 @@ public interface ItemService {
     // 추가
     ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req);
 
-    // //수정
+    // 정보 수정
     ItemUpdateDto.Response updateInfo(
             LoginSessionAttribute attr, 
-            Long adminId, 
+            Long itemId, 
             ItemUpdateDto.UpdateInfoRequest request
+    );
+
+    // 재고 수정
+    ItemUpdateDto.Response updateStock(
+            LoginSessionAttribute attr, 
+            Long itemId, 
+            ItemUpdateDto.UpdateStockRequest request
     );
 
     // //삭제

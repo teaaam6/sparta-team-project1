@@ -5,9 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.dto.*;
+import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.entity.Item;
+import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.repository.ItemRepository;
 import sparta.spartateamproject1.service.ItemService;
+import sparta.spartateamproject1.type.Role;
+import sparta.spartateamproject1.exception.AdminNotFoundException;
+import sparta.spartateamproject1.exception.ForbiddenException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +23,34 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+    private final AdminRepository adminRepository;
+
+    @Override
+    @Transactional
+    public ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req) {
+        // 일단 이 상품을 등록하고 싶은 admin이 있는지 확인한다
+        Admin admin = adminRepository.findById(adminId).orElseThrow(
+            () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")
+        );
+
+        // 상품 등록 가는한 admin인지 확인
+        if (!(admin.getRole() == Role.SUPER_ADMIN || admin.getRole() == Role.ADMIN)) {
+            throw new ForbiddenException("상품은 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
+        }
+
+        Item item = Item.builder()
+            .name(req.getName())
+            .category(req.getCategory())
+            .price(req.getPrice())
+            .stock(req.getStock())
+            .status(req.getStatus())
+            .admin(admin)
+            .build();
+
+        itemRepository.save(item);
+
+        return ItemGetDto.Response.fromEntity(item);
+    }
 
     public List<ItemGetDto.Response> findAll() {
         List<Item> items = itemRepository.findAll();

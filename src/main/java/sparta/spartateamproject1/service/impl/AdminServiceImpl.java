@@ -53,7 +53,10 @@ public class AdminServiceImpl implements AdminService {
     public LoginSessionAttribute login(LoginRequestDto requestDto) {
         // 먼저 이메일로 유저를 찾는다.
         Admin admin = adminRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new LoginException("회원가입된 이메일이 아닙니다."));
-        System.out.println(admin.getRole());
+
+        if (!admin.getStatus().equals(AdminStatus.ACTIVE)) {
+            throw new LoginException("계정이 " + admin.getStatus().name() + " 상태입니다.");
+        }
 
         if (passwordEncoder.matches(requestDto.getPassword(), admin.getPassword())) {
             return new LoginSessionAttribute(admin.getId(), admin.getEmail(), admin.getRole());
@@ -65,18 +68,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public FindSelfResponseDto findSelf(Long id) {
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        LocalDateTime activeAt = admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt();
 
         return FindSelfResponseDto.builder()
-                .id(admin.getId())
                 .email(admin.getEmail())
-                .status(admin.getStatus())
-                .role(admin.getRole())
                 .name(admin.getName())
                 .phoneNumber(admin.getPhoneNumber())
-                .createdAt(admin.getCreatedAt())
-                .activeAt(activeAt)
-                .updatedAt(admin.getModifiedAt())
                 .build();
     }
 

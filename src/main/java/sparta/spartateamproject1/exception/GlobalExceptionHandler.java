@@ -32,4 +32,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleForbiddenExceptionException(ForbiddenException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<?> handleLoginException(LoginException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<?> handleAdminNotFoundException(AdminNotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }

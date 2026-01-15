@@ -26,7 +26,6 @@ public class AdminUpdateDto {
         private String phoneNumber;
     }
     @Getter
-    @Setter
     @Builder
     public static class Response {
         private final String name;

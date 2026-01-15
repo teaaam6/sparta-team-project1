@@ -93,22 +93,11 @@ public class AdminServiceImpl implements AdminService {
 //        return;
 //    }
 
-    public List<AdminGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute) {
+    public List<AdminGetDto.Response> findAll() {
         List<Admin> admins = adminRepository.findAll();
         List<AdminGetDto.Response> dtos = new ArrayList<>();
         for (Admin admin : admins) {
-            dtos.add(
-                    AdminGetDto.Response.builder()
-                            .id(admin.getId())
-                            .name(admin.getName())
-                            .email(admin.getEmail())
-                            .phoneNumber(admin.getPhoneNumber())
-                            .role(admin.getRole())
-                            .status(admin.getStatus())
-                            .createdAt(admin.getCreatedAt())
-                            .approvedAt(admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt())
-                            .build()
-            );
+            dtos.add(AdminGetDto.Response.fromEntity(admin));
         }
         return dtos;
     }

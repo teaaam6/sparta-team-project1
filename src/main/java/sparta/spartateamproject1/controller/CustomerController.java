@@ -36,7 +36,6 @@ public class CustomerController {
 
     @PatchMapping("/customers/{customerId}/status")
     public ResponseEntity<CustomerUpdateDto.StatusResponse> modifyCustomerStatus(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute, @Valid @RequestBody CustomerUpdateDto.StatusRequest dto, @PathVariable Long customerId) {
-        System.out.println(dto.getStatus());
         return ResponseEntity.status(HttpStatus.OK).body(customerService.updateStatus(loginSessionAttribute, customerId, dto));
     }
 }

@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,22 +54,23 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(loginSessionAttribute.getId()));
     }
 
-    //관리자 전체 조회
-    //TODO: 조건별 검색
+//    //관리자 전체 조회
 //    @GetMapping("/admins")
-//    public ResponseEntity<List<AdminGetDto>> getAll(
+//    public Page<CustomerGetDto.Response> getCustomers(
 //            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestBody(required = false) AdminGetDto.Request request
-//    ) {
-//        //페이지 검증
-//        if (page < 0 || size < 0) {
-//            throw new IllegalNumberException("잘못된 페이지 번호입니다.");
-//        }
-//        Pageable pageable = PageRequest.of(page, size);
-//        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll(loginSessionAttribute, pageable, request));
+//            @ModelAttribute CustomerSearchCondition conditionDto) {
+//        int pageNumber = conditionDto.getPageNumber() - 1;
+//        int pageSize = conditionDto.getPageSize();
+//        boolean asc = conditionDto.isAsc();
+//        String sortBy = conditionDto.getSortBy();
+//
+//        // JPA는 0부터 시작
+//        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+//        return customerService.findAll(loginSessionAttribute, conditionDto, pageRequest);
 //    }
+
+
+
     @GetMapping("/admins")
     public ResponseEntity<List<AdminGetDto.Response>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll());
@@ -76,8 +80,9 @@ public class AdminController {
     //관리자 단건 조회
     @GetMapping("/admins/{adminId}")
     public ResponseEntity<AdminGetDto.Response> getOne(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(adminId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(loginSessionAttribute.getId(), adminId));
 
     }
 
@@ -132,7 +137,7 @@ public class AdminController {
     @PostMapping("/admins/{adminId}/deny")
     public ResponseEntity<AdminDeniedDto.DeniedResponse> denied(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @RequestBody AdminDeniedDto.DeniedRequest request,
+            @Valid @RequestBody AdminDeniedDto.DeniedRequest request,
             @PathVariable Long adminId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(loginSessionAttribute.getId(), adminId, request));
     }
@@ -141,7 +146,7 @@ public class AdminController {
     @PatchMapping("/admins/self")
     public ResponseEntity<UpdateSelfDto.Response> updateSelf(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @RequestBody UpdateSelfDto.Request request) {
+            @Valid @RequestBody UpdateSelfDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
     }
 
@@ -150,7 +155,7 @@ public class AdminController {
     public ResponseEntity<AdminUpdateDto.PasswordResponse> updatePassword(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
-            @RequestBody AdminUpdateDto.PasswordRequest request
+            @Valid @RequestBody AdminUpdateDto.PasswordRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updatePassword(loginSessionAttribute.getId(), adminId, request));
 

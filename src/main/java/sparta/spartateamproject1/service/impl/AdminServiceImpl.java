@@ -96,108 +96,118 @@ public class AdminServiceImpl implements AdminService {
         return dtos;
     }
 
-    //관리자 단건 조회
+    //관리자 단건 조회 - 관리자라면 가능
+    //requesterId 는 조회를 요청한 관리자의 아이디
+    //targetId 는 조회해서 볼 관리자의 아이디
     @Override
-    public AdminGetDto.Response findOne(Long id) {
-        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+    public AdminGetDto.Response findOne(Long requesterId, Long targetId) {
+        //관리자가 db에 있는지 확인, 조회할 관리자가 맞는지 확인
+        boolean existence = adminRepository.existsById(requesterId);
+        if(!existence){
+            throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
+        }
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
         return AdminGetDto.Response.builder()
-                .id(admin.getId())
-                .name(admin.getName())
-                .email(admin.getEmail())
-                .phoneNumber(admin.getPhoneNumber())
-                .role(admin.getRole())
-                .status(admin.getStatus())
-                .createdAt(admin.getCreatedAt())
-                .approvedAt(admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt())
+                .id(targetAdmin.getId())
+                .name(targetAdmin.getName())
+                .email(targetAdmin.getEmail())
+                .phoneNumber(targetAdmin.getPhoneNumber())
+                .role(targetAdmin.getRole())
+                .status(targetAdmin.getStatus())
+                .createdAt(targetAdmin.getCreatedAt())
+                .approvedAt(targetAdmin.getApprovalResult() == null ? null : targetAdmin.getApprovalResult().getApprovedAt())
                 .build();
     }
 
-    //관리자 수정
+    //관리자 수정 - 슈퍼관리자만 가능
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 수정할 관리자의 아이디
-    public AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request) {
-        //슈퍼관리자인지 확인
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 수정할 관리자의 아이디
+    public AdminUpdateDto.Response update(Long requesterId, Long targetId, AdminUpdateDto.Request request) {
+        //슈퍼관리자만 가능
+        Admin requesterAdmin = checkSuper(requesterId);
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
-        admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
-        return AdminUpdateDto.Response.fromEntity(admin);
+        targetAdmin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+        return AdminUpdateDto.Response.fromEntity(targetAdmin);
     }
 
-    //관리자 역할 변경
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 수정할 관리자의 아이디
+    //관리자 역할 변경 - 슈퍼관리자만 가능
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 수정할 관리자의 아이디
     @Override
     @Transactional
-    public AdminUpdateDto.RoleResponse updateRole(Long id, Long adminId, AdminUpdateDto.RoleRequest request) {
-        //슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        admin.updateRole(request.getRole());
+    public AdminUpdateDto.RoleResponse updateRole(Long requesterId, Long targetId, AdminUpdateDto.RoleRequest request) {
+        //슈퍼관리자만 가능
+        Admin requesterAdmin = checkSuper(requesterId);
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        targetAdmin.updateRole(request.getRole());
 
-        return AdminUpdateDto.RoleResponse.fromEntity(admin);
+        return AdminUpdateDto.RoleResponse.fromEntity(targetAdmin);
     }
 
-    //관리자 상태 변경
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 수정할 관리자의 아이디
+    //관리자 상태 변경 - 슈퍼관리자만 가능
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 수정할 관리자의 아이디
     @Override
     @Transactional
-    public AdminUpdateDto.StatusResponse updateStatus(Long id, Long adminId, AdminUpdateDto.StatusRequest request) {
-        //슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+    public AdminUpdateDto.StatusResponse updateStatus(Long requesterId, Long targetId, AdminUpdateDto.StatusRequest request) {
+        //슈퍼관리자만 가능
+        Admin superAdmin = checkSuper(requesterId);
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
-        admin.updateStatus(request.getStatus());
-        return AdminUpdateDto.StatusResponse.fromEntity(admin);
+        targetAdmin.updateStatus(request.getStatus());
+        return AdminUpdateDto.StatusResponse.fromEntity(targetAdmin);
     }
 
 
-    //관리자 삭제
+    //관리자 삭제 - 슈퍼관리자만 가능
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 삭제할 관리자의 아이디
-    public void delete(Long id, Long adminId) {
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 삭제할 관리자의 아이디
+    public void delete(Long requesterId, Long targetId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        if(admin.getRole().equals(Role.SUPER_ADMIN)){
+        Admin superAdmin = checkSuper(requesterId);
+
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        //슈퍼관리자를 삭제할 수 없다
+        if(targetAdmin.getRole().equals(Role.SUPER_ADMIN)){
             throw new ForbiddenException("슈퍼관리자는 삭제할 수 없습니다.");
         }
-        adminRepository.deleteById(adminId);
+        adminRepository.deleteById(targetId);
     }
 
-    //관리자 신청 승인
+    //관리자 신청 승인 - 슈퍼관리자만 가능
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 승인할 관리자의 아이디
-    public AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId) {
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 승인할 관리자의 아이디
+    public AdminApprovedDto.ApprovedResponse approve(Long requesterId, Long targetId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
+        Admin superAdmin = checkSuper(requesterId);
         //승인하려는 관리자 확인
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
         ApprovalResult result = new ApprovalResult("", null, LocalDateTime.now(), true);
-        admin.setApprovalResult(result);
-        admin.updateStatus(AdminStatus.ACTIVE);
+        targetAdmin.setApprovalResult(result);
+        targetAdmin.updateStatus(AdminStatus.ACTIVE);
 
-        return AdminApprovedDto.ApprovedResponse.fromEntity(admin);
+        return AdminApprovedDto.ApprovedResponse.fromEntity(targetAdmin);
     }
 
-    //관리자 신청 거절
+    //관리자 신청 거절 - 슈퍼관리자만 가능
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
-    //adminId 는 거절할 관리자의 아이디
-    public AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request) {
+    //requesterId 는 슈퍼관리자의 아이디
+    //targetId 는 거절할 관리자의 아이디
+    public AdminDeniedDto.DeniedResponse denied(Long requesterId, Long targetId, AdminDeniedDto.DeniedRequest request) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
+        Admin superAdmin = checkSuper(requesterId);
         //승인하려는 관리자 확인
-        Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Admin admin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
         ApprovalResult result = new ApprovalResult(request.deniedReason, LocalDateTime.now(), null, false);
         admin.setApprovalResult(result);
@@ -210,6 +220,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request) {
+        //요청한 관리자 id의 값을 request 대로 바꾸기 때문에 관리자 자신이 맞는지 검증하지 않음
 
         //정보 업데이트
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
@@ -250,12 +261,12 @@ public class AdminServiceImpl implements AdminService {
 
 
     //이 아이디가 슈퍼관리자인지 확인 후 권한이 없다면 throw
-    public Admin checkSuperAdmin(Long id) {
-        Admin superAdmin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        if(!superAdmin.getRole().equals(Role.SUPER_ADMIN)){
+    public Admin checkSuper(Long requesterAdminId) {
+        Admin requesterAdmin = adminRepository.findById(requesterAdminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        if(!requesterAdmin.getRole().equals(Role.SUPER_ADMIN)){
             throw new ForbiddenException("권한이 없습니다.");
         }
-        return superAdmin;
+        return requesterAdmin;
     }
 
 }

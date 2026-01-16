@@ -16,7 +16,7 @@ public interface AdminService {
 
     List<AdminGetDto.Response> findAll();
 
-    AdminGetDto.Response findOne(Long id);
+    AdminGetDto.Response findOne(Long id, Long adminId);
 
     AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
 

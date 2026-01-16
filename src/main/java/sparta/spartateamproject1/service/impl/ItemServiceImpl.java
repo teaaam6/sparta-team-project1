@@ -2,6 +2,8 @@ package sparta.spartateamproject1.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.dto.*;
@@ -15,9 +17,6 @@ import sparta.spartateamproject1.type.Role;
 import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.ForbiddenException;
 import sparta.spartateamproject1.exception.ItemNotFoundException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,13 +50,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemGetDto.Response> findAll() {
-        List<Item> items = itemRepository.findAll();
-        List<ItemGetDto.Response> dtos = new ArrayList<>();
-        for (Item item : items) {
-            dtos.add(ItemGetDto.Response.fromEntity(item));
-        }
-        return dtos;
+    public Page<ItemGetPageDto.Response> findAll(ItemSearchCondition conditionDto, PageRequest pageRequest) {
+        return itemRepository.findByOption(conditionDto, pageRequest);
     }
 
     @Override

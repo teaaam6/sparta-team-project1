@@ -43,7 +43,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 ))
                 .from(item)
                 .where(itemNameContains(dto), itemStatusEquals(dto), itemCategoryEquals(dto))
-                .innerJoin(admin)
+                .leftJoin(admin)
                 .on(item.admin.eq(admin))
                 .orderBy(getSortOrder(pageable))
                 .offset(pageable.getOffset())

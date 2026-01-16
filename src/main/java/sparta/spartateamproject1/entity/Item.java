@@ -46,8 +46,10 @@ public class Item {
     private LocalDateTime modifiedAt;
 
 
+    // 상품을 등록한 관리가 어떤 이유에서이든지
+    // 삭제 될 수 있기 때문에 nullable 입니다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id")
+    @JoinColumn(nullable = true, name = "admin_id")
     private Admin admin;
 
     public void updateInfo(String name, ItemCategory category, Long price) {

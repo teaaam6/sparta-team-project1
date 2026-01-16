@@ -71,6 +71,9 @@ public class TestItemAdder implements CommandLineRunner {
             admins.add(admin);
         }
 
+        // 상품의 등록관리자가 삭제되어 null 일수도 있습니다.
+        admins.add(null);
+
         // 테스트 상품 추가
         ItemCategory[] categories = ItemCategory.values();
         ItemStatus[] statuses = ItemStatus.values();

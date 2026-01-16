@@ -2,6 +2,8 @@ package sparta.spartateamproject1.dto;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,6 +36,32 @@ public class CustomerUpdateDto {
 
         public static CustomerUpdateDto.Response fromEntity(Customer customer){
             return Response.builder()
+                    .name(customer.getName())
+                    .email(customer.getEmail())
+                    .phoneNumber(customer.getPhoneNumber())
+                    .status(customer.getStatus())
+                    .createdAt(customer.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class StatusRequest {
+        @NotNull(message = "상태를 설정해주세요.")
+        private CustomerStatus status;
+    }
+
+    @Getter
+    @Builder
+    public static class StatusResponse {
+        private final String name;
+        private final String email;
+        private final String phoneNumber;
+        private final CustomerStatus status;
+        private final LocalDateTime createdAt;
+
+        public static CustomerUpdateDto.StatusResponse fromEntity(Customer customer){
+            return StatusResponse.builder()
                     .name(customer.getName())
                     .email(customer.getEmail())
                     .phoneNumber(customer.getPhoneNumber())

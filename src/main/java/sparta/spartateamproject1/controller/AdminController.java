@@ -70,13 +70,6 @@ public class AdminController {
 
     }
 
-//
-//
-//    @GetMapping("/admins")
-//    public ResponseEntity<List<AdminGetDto.Response>> getAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll());
-//
-//    }
 
     //관리자 단건 조회
     @GetMapping("/admins/{adminId}")

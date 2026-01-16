@@ -121,7 +121,16 @@ public class AdminServiceImpl implements AdminService {
         Admin requesterAdmin = checkSuper(requesterId);
         Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
-        targetAdmin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+        // request에 들어올수있는 값들이 @NotBlank인지 확인 후 null이면 변경 X
+        // notBlank: 널, "", " " 안됨
+        String name = (request.getName() == null || request.getName().isBlank()) ? targetAdmin.getName() : request.getName();
+        String email = (request.getEmail() == null || request.getEmail().isBlank()) ? targetAdmin.getEmail() : request.getEmail();
+        String phoneNumber =
+                (request.getPhoneNumber() == null || request.getPhoneNumber().isBlank())
+                        ? targetAdmin.getPhoneNumber()
+                        : request.getPhoneNumber();
+
+        targetAdmin.updateAdmin(name, email, phoneNumber);
         return AdminUpdateDto.Response.fromEntity(targetAdmin);
     }
 
@@ -215,7 +224,17 @@ public class AdminServiceImpl implements AdminService {
 
         //정보 업데이트
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+
+        // request에 들어올수있는 값들이 @NotBlank인지 확인 후 null이면 변경 X
+        // notBlank: 널, "", " " 안됨
+        String name = (request.getName() == null || request.getName().isBlank()) ? admin.getName() : request.getName();
+        String email = (request.getEmail() == null || request.getEmail().isBlank()) ? admin.getEmail() : request.getEmail();
+        String phoneNumber =
+                (request.getPhoneNumber() == null || request.getPhoneNumber().isBlank())
+                        ? admin.getPhoneNumber()
+                        : request.getPhoneNumber();
+
+        admin.updateAdmin(name, email, phoneNumber);
 
         return UpdateSelfDto.Response.fromEntity(admin);
     }

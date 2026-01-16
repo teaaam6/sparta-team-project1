@@ -1,5 +1,8 @@
 package sparta.spartateamproject1.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import sparta.spartateamproject1.dto.*;
 
 import java.util.List;
@@ -14,9 +17,9 @@ public interface AdminService {
     //Todo
     //List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto request);
 
-    List<AdminGetDto.Response> findAll();
+    Page<AdminGetAllDto.Response> findAll(Long id, AdminSearchCondition conditionDto, Pageable pageable);
 
-    AdminGetDto.Response findOne(Long id);
+    AdminGetDto.Response findOne(Long id, Long adminId);
 
     AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
 

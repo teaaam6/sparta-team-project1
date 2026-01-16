@@ -18,10 +18,6 @@ public class UpdateSelfDto {
         @Email
         private String email;
 
-        @NotBlank(message = "비밀번호는 공백이 될 수 없습니다.")
-        @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
-        private String password;
-
         @NotBlank(message = "폰번호는 필수 기입란 입니다.")
         @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "폰번호 형식이 올바르지 않습니다.")
         private String phoneNumber;

@@ -51,5 +51,11 @@ public class CustomerServiceImpl implements CustomerService {
     public void delete(
             LoginSessionAttribute attribute,
             Long customerId) {
+
+        if (!customerRepository.existsById(customerId)) {
+            throw new CustomerNotFoundException("존재하지 않는 고객입니다.");
+        }
+
+        customerRepository.deleteById(customerId);
     }
 }

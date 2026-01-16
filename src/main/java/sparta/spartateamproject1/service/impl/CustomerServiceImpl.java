@@ -46,4 +46,27 @@ public class CustomerServiceImpl implements CustomerService {
 //                .createdAt(customer.getCreatedAt())
 //                .build();
 //    }
+
+
+    @Override
+    @Transactional
+    public CustomerUpdateDto.Response update(LoginSessionAttribute loginSessionAttribute, Long id, CustomerUpdateDto.Request request) {
+        adminRepository.findById(loginSessionAttribute.getId()).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
+
+        // request에 들어올수있는 값들이 null인지 확인 후 null이면 변경 X
+        String name = request.getName() == null ? customer.getName() : request.getName();
+        String email = request.getEmail() == null ? customer.getEmail() : request.getEmail();
+        String phoneNumber = request.getPhoneNumber() == null ? customer.getPhoneNumber() : request.getPhoneNumber();
+
+        customer.updateCustomer(name, email, phoneNumber);
+        return CustomerUpdateDto.Response.builder()
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .status(customer.getStatus())
+                .createdAt(customer.getCreatedAt())
+                .build();
+    }
+
 }

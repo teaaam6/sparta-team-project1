@@ -2,12 +2,13 @@ package sparta.spartateamproject1.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import sparta.spartateamproject1.entity.Admin;
+import sparta.spartateamproject1.type.AdminStatus;
+import sparta.spartateamproject1.type.Role;
 
 @Getter
 public class AdminUpdateDto {
@@ -40,6 +41,80 @@ public class AdminUpdateDto {
                     .build();
         }
 
+    }
+
+    @Getter
+    public static class RoleRequest {
+        @NotNull(message = "역할을 설정해주세요.")
+        private Role role;
+    }
+
+
+    @Getter
+    @Builder
+    public static class RoleResponse {
+        private final Long id;
+        private final String name;
+        private final String email;
+        private final Role role;
+        private final AdminStatus status;
+
+        public static AdminUpdateDto.RoleResponse fromEntity(Admin admin){
+            return AdminUpdateDto.RoleResponse.builder()
+                    .id(admin.getId())
+                    .name(admin.getName())
+                    .email(admin.getEmail())
+                    .role(admin.getRole())
+                    .status(admin.getStatus())
+                    .build();
+        }
 
     }
+
+    @Getter
+    public static class StatusRequest {
+        @NotNull(message = "상태를 설정해주세요.")
+        private AdminStatus status;
+    }
+
+
+    @Getter
+    @Builder
+    public static class StatusResponse {
+        private final Long id;
+        private final String name;
+        private final String email;
+        private final Role role;
+        private final AdminStatus status;
+
+        public static AdminUpdateDto.StatusResponse fromEntity(Admin admin){
+            return AdminUpdateDto.StatusResponse.builder()
+                    .id(admin.getId())
+                    .name(admin.getName())
+                    .email(admin.getEmail())
+                    .role(admin.getRole())
+                    .status(admin.getStatus())
+                    .build();
+        }
+
+    }
+
+    @Getter
+    public static class PasswordRequest {
+        private String oldPassword;
+        private String newPassword;
+    }
+
+    @Getter
+    @Builder
+    public static class PasswordResponse {
+        private final String message;
+
+        public static AdminUpdateDto.PasswordResponse success(String message){
+            return AdminUpdateDto.PasswordResponse.builder()
+                    .message(message)
+                    .build();
+        }
+    }
+
 }

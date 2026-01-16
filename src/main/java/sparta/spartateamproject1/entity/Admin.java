@@ -50,10 +50,18 @@ public class Admin {
     @Embedded
     private ApprovalResult approvalResult;
 
-    public void updateAdmin(String name, String email, String phoneNumber){
+    public void updateAdmin(String name, String email, String phoneNumber) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public void updatePassword(String password){
+        this.password = password;
+    }
+
+    public void updateRole(Role role){
+        this.role = role;
     }
 
     public void updateStatus(AdminStatus status){

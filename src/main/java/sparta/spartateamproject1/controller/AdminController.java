@@ -86,8 +86,26 @@ public class AdminController {
     public ResponseEntity<AdminUpdateDto.Response> update(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
-            @RequestBody AdminUpdateDto.Request request) {
+            @Valid @RequestBody AdminUpdateDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.update(loginSessionAttribute.getId(), adminId, request));
+    }
+
+    //관리자 역할 변경
+    @PatchMapping("/admins/{adminId}/role")
+    public ResponseEntity<AdminUpdateDto.RoleResponse> updateRole(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId,
+            @Valid @RequestBody AdminUpdateDto.RoleRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateRole(loginSessionAttribute.getId(), adminId, request));
+    }
+
+    //관리자 상태 변경
+    @PatchMapping("/admins/{adminId}/status")
+    public ResponseEntity<AdminUpdateDto.StatusResponse> updateStatus(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId,
+            @Valid @RequestBody AdminUpdateDto.StatusRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatus(loginSessionAttribute.getId(), adminId, request));
     }
 
 
@@ -109,7 +127,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.approve(loginSessionAttribute.getId(), adminId));
     }
 
-    //관리자 신청 거절
+    //관리자 신청 거부
     //adminId: 거절할 관리자
     @PostMapping("/admins/{adminId}/deny")
     public ResponseEntity<AdminDeniedDto.DeniedResponse> denied(
@@ -127,6 +145,15 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
     }
 
-    //관리자 자신 비밀번호 변경
+    //관리자 비밀번호 변경
+    @PatchMapping("/admins/{adminId}/password")
+    public ResponseEntity<AdminUpdateDto.PasswordResponse> updatePassword(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @PathVariable Long adminId,
+            @RequestBody AdminUpdateDto.PasswordRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updatePassword(loginSessionAttribute.getId(), adminId, request));
+
+    }
 
 }

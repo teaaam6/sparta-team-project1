@@ -15,6 +15,10 @@ public interface CustomerService {
 //    CustomerGetDto.Response findOne(Long id);
 //    //수정
     CustomerUpdateDto.Response update(LoginSessionAttribute loginSessionAttribute, Long id, CustomerUpdateDto.Request request);
-//    //삭제
+
+    //    //삭제
 //    void delete(Long id, Long adminId);
+    // 고객 상태 변경
+    CustomerUpdateDto.StatusResponse updateStatus(LoginSessionAttribute loginSessionAttribute, Long id, CustomerUpdateDto.StatusRequest request);
+
 }

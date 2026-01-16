@@ -61,7 +61,7 @@ public class TestItemAdder implements CommandLineRunner {
                     .email(adminEmails.get(i))
                     .password(passwordEncoder.encode("12345678"))
                     .phoneNumber(adminPhoneNumbers.get(i))
-                    .role(Role.SUPER_ADMIN) // 일단은 전부 슈퍼 유저로
+                    .role(Role.ADMIN) // 일단은 전부 슈퍼 유저로
                     .status(AdminStatus.ACTIVE)
                     .approvalResult(result)
                     .build();
@@ -70,6 +70,9 @@ public class TestItemAdder implements CommandLineRunner {
 
             admins.add(admin);
         }
+
+        // 상품의 등록관리자가 삭제되어 null 일수도 있습니다.
+        admins.add(null);
 
         // 테스트 상품 추가
         ItemCategory[] categories = ItemCategory.values();

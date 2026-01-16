@@ -18,6 +18,8 @@ import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.ForbiddenException;
 import sparta.spartateamproject1.exception.ItemNotFoundException;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.save(item);
 
-        return ItemGetDto.Response.fromEntity(item);
+        return ItemGetDto.Response.fromEntity(item, Optional.of(admin));
     }
 
     @Override
@@ -59,7 +61,10 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(id).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
-        return ItemGetDto.Response.fromEntity(item);
+
+        Optional<Admin> registrar = getRegistrarSafe(item);
+
+        return ItemGetDto.Response.fromEntity(item, registrar);
     }
 
     @Override
@@ -149,5 +154,15 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return admin;
+    }
+
+    private Optional<Admin> getRegistrarSafe(Item item) {
+        Admin admin = item.getAdmin();
+
+        if (admin == null) {
+            return Optional.empty();
+        }
+
+        return adminRepository.findById(item.getAdmin().getId());
     }
 }

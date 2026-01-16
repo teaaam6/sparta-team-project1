@@ -14,6 +14,7 @@ import sparta.spartateamproject1.exception.*;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
 import sparta.spartateamproject1.type.AdminStatus;
+import sparta.spartateamproject1.repository.ItemRepository;
 import sparta.spartateamproject1.type.ErrorCode;
 import sparta.spartateamproject1.type.Role;
 
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
+    private final ItemRepository itemRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -191,6 +194,10 @@ public class AdminServiceImpl implements AdminService {
         if(targetAdmin.getRole().equals(Role.SUPER_ADMIN)){
             throw new ForbiddenException("슈퍼관리자는 삭제할 수 없습니다.");
         }
+
+        // 이 admin이 등록한 상품들을 cleanup
+        itemRepository.setAdminToNullByAdminId(targetId);
+
         adminRepository.deleteById(targetId);
     }
 

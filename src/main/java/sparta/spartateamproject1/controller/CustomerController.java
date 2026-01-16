@@ -1,5 +1,6 @@
 package sparta.spartateamproject1.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,10 @@ public class CustomerController {
     }
 
     @PatchMapping("/customers/{customerId}")
-    public ResponseEntity<CustomerUpdateDto.Response> modifyCustomer(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute, @RequestBody CustomerUpdateDto.Request dto, @PathVariable Long customerId) {
+    public ResponseEntity<CustomerUpdateDto.Response> modifyCustomer(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute, @Valid @RequestBody CustomerUpdateDto.Request dto, @PathVariable Long customerId) {
         return ResponseEntity.status(HttpStatus.OK).body(customerService.update(loginSessionAttribute, customerId, dto));
     }
+
+//    @PostMapping("/customers/{customerId}")
+//    public ResponseEntity
 }

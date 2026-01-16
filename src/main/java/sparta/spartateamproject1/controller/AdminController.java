@@ -58,7 +58,8 @@ public class AdminController {
     @GetMapping("/admins")
     public Page<AdminGetAllDto.Response> getAdmins(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @ModelAttribute AdminSearchCondition conditionDto) {
+            @ModelAttribute AdminSearchCondition conditionDto
+    ) {
         int pageNumber = conditionDto.getPageNumber() - 1;
         int pageSize = conditionDto.getPageSize();
         boolean asc = conditionDto.isAsc();
@@ -75,7 +76,8 @@ public class AdminController {
     @GetMapping("/admins/{adminId}")
     public ResponseEntity<AdminGetDto.Response> getOne(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @PathVariable Long adminId) {
+            @PathVariable Long adminId
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findOne(loginSessionAttribute.getId(), adminId));
 
     }
@@ -85,7 +87,8 @@ public class AdminController {
     public ResponseEntity<AdminUpdateDto.Response> update(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminUpdateDto.Request request) {
+            @Valid @RequestBody AdminUpdateDto.Request request
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.update(loginSessionAttribute.getId(), adminId, request));
     }
 
@@ -94,7 +97,8 @@ public class AdminController {
     public ResponseEntity<AdminUpdateDto.RoleResponse> updateRole(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminUpdateDto.RoleRequest request) {
+            @Valid @RequestBody AdminUpdateDto.RoleRequest request
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateRole(loginSessionAttribute.getId(), adminId, request));
     }
 
@@ -103,7 +107,8 @@ public class AdminController {
     public ResponseEntity<AdminUpdateDto.StatusResponse> updateStatus(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @PathVariable Long adminId,
-            @Valid @RequestBody AdminUpdateDto.StatusRequest request) {
+            @Valid @RequestBody AdminUpdateDto.StatusRequest request
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatus(loginSessionAttribute.getId(), adminId, request));
     }
 
@@ -112,7 +117,8 @@ public class AdminController {
     @DeleteMapping("/admins/{adminId}")
     public ResponseEntity<Void> delete(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @PathVariable Long adminId) {
+            @PathVariable Long adminId
+    ) {
         adminService.delete(loginSessionAttribute.getId(), adminId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -122,7 +128,8 @@ public class AdminController {
     @PostMapping("/admins/{adminId}/approve")
     public ResponseEntity<AdminApprovedDto.ApprovedResponse> approve(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @PathVariable Long adminId) {
+            @PathVariable Long adminId
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.approve(loginSessionAttribute.getId(), adminId));
     }
 
@@ -132,7 +139,8 @@ public class AdminController {
     public ResponseEntity<AdminDeniedDto.DeniedResponse> denied(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
             @Valid @RequestBody AdminDeniedDto.DeniedRequest request,
-            @PathVariable Long adminId) {
+            @PathVariable Long adminId
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(loginSessionAttribute.getId(), adminId, request));
     }
 
@@ -140,7 +148,8 @@ public class AdminController {
     @PatchMapping("/admins/self")
     public ResponseEntity<UpdateSelfDto.Response> updateSelf(
             @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-            @Valid @RequestBody UpdateSelfDto.Request request) {
+            @Valid @RequestBody UpdateSelfDto.Request request
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
     }
 

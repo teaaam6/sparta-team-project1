@@ -1,12 +1,13 @@
 package sparta.spartateamproject1.dto;
 
-import io.micrometer.common.lang.Nullable;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.type.AdminStatus;
 import sparta.spartateamproject1.type.Role;

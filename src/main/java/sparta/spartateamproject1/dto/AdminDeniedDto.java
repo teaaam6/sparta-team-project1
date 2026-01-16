@@ -36,7 +36,7 @@ public class AdminDeniedDto {
                     .name(admin.getName())
                     .status(admin.getStatus())
                     .deniedAt(admin.getApprovalResult().getDeniedAt())
-                    .deniedReason(admin.getApprovalResult().getDeniedReason())
+                    .deniedReason(admin.getApprovalResult() == null ? null : admin.getApprovalResult().getDeniedReason())
                     .build();
         }
     }

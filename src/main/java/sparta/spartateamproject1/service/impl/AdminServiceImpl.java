@@ -2,6 +2,9 @@ package sparta.spartateamproject1.service.impl;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.config.PasswordEncoder;
@@ -74,26 +77,15 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
-//    //관리자 전체 조회
-//    @Override
-//    public List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto.request) {
-//
-//        //TODO: 정렬 쿼리 DSL
-//        //조회 가능한 값: 이 이메일름,, 가입일, role, status
-//        //정렬기준(오름, 내림차순) 이름, 이메일 , 가입일
-//
-//
-//        Page<Admin> admins = adminRepository.findAll(pageable);
-//        return;
-//    }
-
-    public List<AdminGetDto.Response> findAll() {
-        List<Admin> admins = adminRepository.findAll();
-        List<AdminGetDto.Response> dtos = new ArrayList<>();
-        for (Admin admin : admins) {
-            dtos.add(AdminGetDto.Response.fromEntity(admin));
+    //관리자 전체 조회 - 관리자라면 가능
+    @Override
+    public Page<AdminGetAllDto.Response> findAll(Long id, AdminSearchCondition dto, Pageable pageable) {
+        //요청자가 관리자가 맞는지 확인
+        boolean existence = adminRepository.existsById(id);
+        if (!existence) {
+            throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
         }
-        return dtos;
+        return adminRepository.findByOption(dto, pageable);
     }
 
     //관리자 단건 조회 - 관리자라면 가능

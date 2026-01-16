@@ -54,28 +54,29 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(loginSessionAttribute.getId()));
     }
 
-//    //관리자 전체 조회
-//    @GetMapping("/admins")
-//    public Page<CustomerGetDto.Response> getCustomers(
-//            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
-//            @ModelAttribute CustomerSearchCondition conditionDto) {
-//        int pageNumber = conditionDto.getPageNumber() - 1;
-//        int pageSize = conditionDto.getPageSize();
-//        boolean asc = conditionDto.isAsc();
-//        String sortBy = conditionDto.getSortBy();
-//
-//        // JPA는 0부터 시작
-//        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
-//        return customerService.findAll(loginSessionAttribute, conditionDto, pageRequest);
-//    }
-
-
-
+    //관리자 전체 조회
     @GetMapping("/admins")
-    public ResponseEntity<List<AdminGetDto.Response>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll());
+    public Page<AdminGetAllDto.Response> getAdmins(
+            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @ModelAttribute AdminSearchCondition conditionDto) {
+        int pageNumber = conditionDto.getPageNumber() - 1;
+        int pageSize = conditionDto.getPageSize();
+        boolean asc = conditionDto.isAsc();
+        String sortBy = conditionDto.getSortBy();
+
+        // JPA는 0부터 시작
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+        return adminService.findAll(loginSessionAttribute.getId(), conditionDto, pageRequest);
 
     }
+
+//
+//
+//    @GetMapping("/admins")
+//    public ResponseEntity<List<AdminGetDto.Response>> getAll() {
+//        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAll());
+//
+//    }
 
     //관리자 단건 조회
     @GetMapping("/admins/{adminId}")

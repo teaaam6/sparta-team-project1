@@ -74,7 +74,7 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
-//    //관리자 전체 조회
+    //관리자 전체 조회
 //    @Override
 //    public List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto.request) {
 //

@@ -1,14 +1,18 @@
 package sparta.spartateamproject1.controller;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
+
 import jakarta.validation.Valid;
+
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.service.ItemService;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,8 +30,21 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-    public ResponseEntity<List<ItemGetDto.Response>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll());
+    public ResponseEntity<Page<ItemGetPageDto.Response>> getAll(
+        @ModelAttribute ItemSearchCondition conditionDto
+    ) {
+        // JPA는 0부터 시작
+        int pageNumber = conditionDto.getPageNumber() - 1;
+        int pageSize = conditionDto.getPageSize();
+        boolean asc = conditionDto.isAsc();
+        String sortBy = conditionDto.getSortBy();
+
+        PageRequest pageRequest = PageRequest.of(
+                pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll(
+            conditionDto, pageRequest
+        ));
     }
 
     @GetMapping("/items/{itemId}")

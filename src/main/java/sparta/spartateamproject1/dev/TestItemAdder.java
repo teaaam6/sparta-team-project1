@@ -61,7 +61,7 @@ public class TestItemAdder implements CommandLineRunner {
                     .email(adminEmails.get(i))
                     .password(passwordEncoder.encode("12345678"))
                     .phoneNumber(adminPhoneNumbers.get(i))
-                    .role(Role.SUPER_ADMIN) // 일단은 전부 슈퍼 유저로
+                    .role(Role.ADMIN) // 일단은 전부 슈퍼 유저로
                     .status(AdminStatus.ACTIVE)
                     .approvalResult(result)
                     .build();

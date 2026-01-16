@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sparta.spartateamproject1.dto.*;
-import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.entity.Customer;
 import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.CustomerNotFoundException;
@@ -14,8 +13,6 @@ import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.repository.CustomerRepository;
 import sparta.spartateamproject1.service.CustomerService;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,17 +30,26 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     //세부 조회
-//    @Override
-//    public CustomerGetDto.Response findOne(Long id) {
-//        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
-//
-//        return CustomerGetDto.Response.builder()
-//                .id(customer.getId())
-//                .name(customer.getName())
-//                .email(customer.getEmail())
-//                .phoneNumber(customer.getPhoneNumber())
-//                .status(customer.getStatus())
-//                .createdAt(customer.getCreatedAt())
-//                .build();
-//    }
+    @Override
+    public CustomerGetDto.Response findOne(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
+
+        return CustomerGetDto.Response.builder()
+                .id(customer.getId())
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .status(customer.getStatus())
+                .createdAt(customer.getCreatedAt())
+                .build();
+    }
+    //고객정보수정
+
+    //고객상태수정
+    //고객삭제
+    @Override
+    public void delete(
+            LoginSessionAttribute attribute,
+            Long customerId) {
+    }
 }

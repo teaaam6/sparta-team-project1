@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sparta.spartateamproject1.dto.CustomerGetDto;
 import sparta.spartateamproject1.dto.CustomerSearchCondition;
@@ -26,5 +28,21 @@ public class CustomerController {
         // JPA는 0부터 시작
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
         return customerService.findAll(loginSessionAttribute, conditionDto, pageRequest);
+    }
+    //세부조회
+    @GetMapping("/customers/{customerId}")
+    public ResponseEntity<CustomerGetDto.Response> getOne(
+            @PathVariable Long customerId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.findOne(customerId));
+    }
+    //고객삭제
+    @DeleteMapping("/customer/{customerId}")
+    public ResponseEntity<Void> delete(
+        @PathVariable(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @PathVariable Long customerId
+    ) {
+        customerService.delete(loginSessionAttribute, customerId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

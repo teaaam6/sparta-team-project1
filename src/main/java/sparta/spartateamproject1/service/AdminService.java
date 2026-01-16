@@ -9,7 +9,7 @@ public interface AdminService {
 
     LoginSessionAttribute login(LoginRequestDto requestDto);
 
-    FindSelfResponseDto findSelf(Long id);
+    FindSelfResponseDto findSelf(String token);
 
     //Todo
     //List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto request);
@@ -18,13 +18,13 @@ public interface AdminService {
 
     AdminGetDto.Response findOne(Long id);
 
-    AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
+    AdminUpdateDto.Response update(String token, Long adminId, AdminUpdateDto.Request request);
 
-    void delete(Long id, Long adminId);
+    void delete(String token, Long adminId);
 
-    AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId);
+    AdminApprovedDto.ApprovedResponse approve(String token, Long adminId);
 
-    AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request);
+    AdminDeniedDto.DeniedResponse denied(String token, Long adminId, AdminDeniedDto.DeniedRequest request);
 
-    UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request);
+    UpdateSelfDto.Response updateSelf(String token, UpdateSelfDto.Request request);
 }

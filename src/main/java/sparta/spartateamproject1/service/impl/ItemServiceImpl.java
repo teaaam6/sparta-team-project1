@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.entity.Item;
+import sparta.spartateamproject1.jwt.JWTUtil;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.repository.ItemRepository;
 import sparta.spartateamproject1.service.ItemService;
@@ -24,12 +25,15 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
+    private final JWTUtil jwtUtil;
 
     @Override
     @Transactional
-    public ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req) {
+    public ItemGetDto.Response addItem(String token, ItemAddDto.Request req) {
         // 일단 이 상품을 등록하고 싶은 admin이 있는지 확인한다
-        Admin admin = adminRepository.findById(adminId).orElseThrow(
+        String email = jwtUtil.getEmail(token);
+
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(
             () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")
         );
 

@@ -11,7 +11,7 @@ public interface ItemService {
     List<ItemGetDto.Response> findAll();
 
     // 추가
-    ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req);
+    ItemGetDto.Response addItem(String token, ItemAddDto.Request req);
 
     //세부조회
     // CustomerGetDto.Response findOne(Long id);

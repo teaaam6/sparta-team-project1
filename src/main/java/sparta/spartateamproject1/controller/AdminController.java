@@ -25,30 +25,32 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.signup(request));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest httpServletRequest) {
-        LoginSessionAttribute loginSessionAttribute = adminService.login(requestDto);
-
-        // 새로운 세션 생성
-        HttpSession session = httpServletRequest.getSession(true);
-        session.setAttribute("adminSession", loginSessionAttribute);
-        session.setMaxInactiveInterval(30 * 60);
-
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
-        // 현재 세션 제거
-        httpServletRequest.getSession().invalidate();
-        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 완료");
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest httpServletRequest) {
+//        LoginSessionAttribute loginSessionAttribute = adminService.login(requestDto);
+//
+//        // 새로운 세션 생성
+//        HttpSession session = httpServletRequest.getSession(true);
+//        session.setAttribute("adminSession", loginSessionAttribute);
+//        session.setMaxInactiveInterval(30 * 60);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
+//    }
+//
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
+//        // 현재 세션 제거
+//        httpServletRequest.getSession().invalidate();
+//        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 완료");
+//    }
 
     // @SessionAttribute의 required() default true 이므로 밑의 경로에 로그인하지 않은 사용자가 접근할 수 없다.
     // 오직 로그인에 성공하여 sessionAttribute를 가진 사용자 만이 접근 가능하다.
     @GetMapping("/self")
-    public ResponseEntity<?> self(@SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(loginSessionAttribute.getId()));
+    public ResponseEntity<?> self(
+            @RequestHeader("Authorization") String token
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.findSelf(token));
     }
 
     //관리자 전체 조회
@@ -84,19 +86,23 @@ public class AdminController {
     //관리자 수정
     @PatchMapping("/admins/{adminId}")
     public ResponseEntity<AdminUpdateDto.Response> update(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long adminId,
             @RequestBody AdminUpdateDto.Request request) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(loginSessionAttribute.getId(), adminId, request));
+        token = token.replace("Bearer ", "").trim();
+
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.update(token, adminId, request));
     }
 
 
     //관리자 삭제
     @DeleteMapping("/admins/{adminId}")
     public ResponseEntity<Void> delete(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long adminId) {
-        adminService.delete(loginSessionAttribute.getId(), adminId);
+        token = token.replace("Bearer ", "").trim();
+
+        adminService.delete(token, adminId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -104,27 +110,33 @@ public class AdminController {
     //adminId: 승인할 관리자
     @PostMapping("/admins/{adminId}/approve")
     public ResponseEntity<AdminApprovedDto.ApprovedResponse> approve(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long adminId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.approve(loginSessionAttribute.getId(), adminId));
+        token = token.replace("Bearer ", "").trim();
+
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.approve(token, adminId));
     }
 
     //관리자 신청 거절
     //adminId: 거절할 관리자
     @PostMapping("/admins/{adminId}/deny")
     public ResponseEntity<AdminDeniedDto.DeniedResponse> denied(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
             @RequestBody AdminDeniedDto.DeniedRequest request,
             @PathVariable Long adminId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(loginSessionAttribute.getId(), adminId, request));
+        token = token.replace("Bearer ", "").trim();
+
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.denied(token, adminId, request));
     }
 
     //관리자 자신정보 수정
     @PatchMapping("/admins/self")
     public ResponseEntity<UpdateSelfDto.Response> updateSelf(
-            @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
             @RequestBody UpdateSelfDto.Request request) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(loginSessionAttribute.getId(), request));
+        token = token.replace("Bearer ", "").trim();
+
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateSelf(token, request));
     }
 
     //관리자 자신 비밀번호 변경

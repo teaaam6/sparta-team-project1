@@ -9,6 +9,7 @@ import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.entity.ApprovalResult;
 import sparta.spartateamproject1.exception.*;
+import sparta.spartateamproject1.jwt.JWTUtil;
 import sparta.spartateamproject1.repository.AdminRepository;
 import sparta.spartateamproject1.service.AdminService;
 import sparta.spartateamproject1.type.AdminStatus;
@@ -25,6 +26,7 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
 
     @Transactional
     @Override
@@ -33,13 +35,20 @@ public class AdminServiceImpl implements AdminService {
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
         }
 
+        AdminStatus status = AdminStatus.WAITING;
+
+        if (request.getRole().equals(Role.SUPER_ADMIN)){
+            status = AdminStatus.ACTIVE;
+        }
+
         Admin admin = Admin.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .role(request.getRole())
-                .status(AdminStatus.WAITING)
+                .status(status)
+                .approvalResult(new ApprovalResult().approve())
                 .build();
 
         adminRepository.save(admin);
@@ -64,8 +73,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public FindSelfResponseDto findSelf(Long id) {
-        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+    public FindSelfResponseDto findSelf(String token) {
+        String email = jwtUtil.getEmail(token);
+
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(
+                () -> new AdminNotFoundException("존재하지 않는 관리자입니다.")
+        );
 
         return FindSelfResponseDto.builder()
                 .email(admin.getEmail())
@@ -116,10 +129,12 @@ public class AdminServiceImpl implements AdminService {
     //관리자 수정
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
+    //token 은 슈퍼관리자의 토큰
     //adminId 는 수정할 관리자의 아이디
-    public AdminUpdateDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request) {
+    public AdminUpdateDto.Response update(String token, Long adminId, AdminUpdateDto.Request request) {
         //슈퍼관리자 또는 자기자신인지 확인
+        isSuperAdmin(token);
+
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
         admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
@@ -128,11 +143,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
+    //token 은 슈퍼관리자의 토큰
     //adminId 는 삭제할 관리자의 아이디
-    public void delete(Long id, Long adminId) {
+    public void delete(String token, Long adminId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin admin = checkSuperAdmin(id);
+        isSuperAdmin(token);
         boolean exists = adminRepository.existsById(adminId);
         if(!exists) {
             throw new AdminNotFoundException("존재하지 않는 관리자입니다.");
@@ -143,11 +158,11 @@ public class AdminServiceImpl implements AdminService {
     //관리자 신청 승인
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
+    //token 은 슈퍼관리자의 토큰
     //adminId 는 승인할 관리자의 아이디
-    public AdminApprovedDto.ApprovedResponse approve(Long id, Long adminId) {
+    public AdminApprovedDto.ApprovedResponse approve(String token, Long adminId) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
+        isSuperAdmin(token);
         //승인하려는 관리자 확인
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
@@ -161,11 +176,11 @@ public class AdminServiceImpl implements AdminService {
     //관리자 신청 거절
     @Override
     @Transactional
-    //id 는 슈퍼관리자의 아이디
+    //token 은 슈퍼관리자의 토큰
     //adminId 는 거절할 관리자의 아이디
-    public AdminDeniedDto.DeniedResponse denied(Long id, Long adminId, AdminDeniedDto.DeniedRequest request) {
+    public AdminDeniedDto.DeniedResponse denied(String token, Long adminId, AdminDeniedDto.DeniedRequest request) {
         //이 아이디가 슈퍼관리자인지 확인
-        Admin superAdmin = checkSuperAdmin(id);
+        isSuperAdmin(token);
         //승인하려는 관리자 확인
         Admin admin = adminRepository.findById(adminId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
@@ -179,10 +194,11 @@ public class AdminServiceImpl implements AdminService {
     //관리자 자신의 정보수정
     @Override
     @Transactional
-    public UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request) {
+    public UpdateSelfDto.Response updateSelf(String token, UpdateSelfDto.Request request) {
+        String email = jwtUtil.getEmail(token);
 
         //정보 업데이트
-        Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
         admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
 
         return UpdateSelfDto.Response.fromEntity(admin);
@@ -197,4 +213,15 @@ public class AdminServiceImpl implements AdminService {
         return superAdmin;
     }
 
+    public void isSuperAdmin(String token){
+        String email = jwtUtil.getEmail(token);
+
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(
+                () -> new AdminNotFoundException("존재하지 않는 관리자 입니다.")
+        );
+
+        if (!admin.getRole().equals(Role.SUPER_ADMIN)){
+            throw new ForbiddenException("권한이 없습니다.");
+        }
+    }
 }

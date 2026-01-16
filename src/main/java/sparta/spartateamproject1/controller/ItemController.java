@@ -18,11 +18,13 @@ public class ItemController {
 
     @PostMapping("/items")
     public ResponseEntity<?> addItem(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @RequestHeader("Authorization") String token,
         @Valid @RequestBody ItemAddDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                itemService.addItem(loginSessionAttribute.getId(), req));
+                itemService.addItem(token, req));
     }
 
     @GetMapping("/items")

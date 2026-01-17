@@ -32,10 +32,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemGetDto.Response addItem(Long adminId, ItemAddDto.Request req) {
         Admin admin = getAdminIfExistsAndActive(adminId);
 
-        // 상품 등록 가는한 admin인지 확인
-        if (!(admin.getRole() == Role.SUPER_ADMIN || admin.getRole() == Role.ADMIN)) {
-            throw new ForbiddenException("상품 추가는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
-        }
+        throwIfNotAdminOrSuperAdmin(
+                admin, "상품 추가는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
 
         Item item = Item.builder()
             .name(req.getName())
@@ -74,10 +72,10 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateInfoDto.Request req
     ) {
-        // 제 생각에 모든 admin이 수정이 가능 할거라 생각하지만,
-        // 혹시 admin이 비활성이거나 정지된 admin일 경우를 대비하여
-        // 체크를 하는 것이 맞다고 생각합니다.
-        getAdminIfExistsAndActive(attr.getId());
+        Admin admin = getAdminIfExistsAndActive(attr.getId());
+
+        throwIfNotAdminOrSuperAdmin(
+                admin, "상품 정보 업데이트는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -95,8 +93,10 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateStockDto.Request req
     ) {
-        // TODO: item 재고 관리를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        Admin admin = getAdminIfExistsAndActive(attr.getId());
+
+        throwIfNotAdminOrSuperAdmin(
+                admin, "상품 재고 업데이트는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -114,8 +114,10 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateStatusDto.Request req
     ) {
-        // TODO: item 상태 관리를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        Admin admin = getAdminIfExistsAndActive(attr.getId());
+
+        throwIfNotAdminOrSuperAdmin(
+                admin, "상품 상태 업데이트는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -132,8 +134,10 @@ public class ItemServiceImpl implements ItemService {
         LoginSessionAttribute attr,
         Long itemId
     ) {
-        // TODO: item 삭제를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        Admin admin = getAdminIfExistsAndActive(attr.getId());
+
+        throwIfNotAdminOrSuperAdmin(
+                admin, "상품 삭제는 SUPER_ADMIN 혹은 ADMIN만 가능합니다.");
 
         if (!itemRepository.existsById(itemId)) {
             throw new ItemNotFoundException("존재하지 않는 상품 입니다.");
@@ -164,5 +168,11 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return adminRepository.findById(item.getAdmin().getId());
+    }
+
+    private void throwIfNotAdminOrSuperAdmin(Admin admin, String message) throws ForbiddenException{
+        if (!(admin.getRole() == Role.SUPER_ADMIN || admin.getRole() == Role.ADMIN)) {
+            throw new ForbiddenException(message);
+        }
     }
 }

@@ -6,6 +6,7 @@ import sparta.spartateamproject1.entity.Item;
 import sparta.spartateamproject1.type.ItemStatus;
 import sparta.spartateamproject1.type.ItemCategory;
 import jakarta.validation.constraints.*;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +14,11 @@ public class ItemUpdateInfoDto {
     @Getter
     @Builder
     public static class Request {
-        @NotBlank(message = "상품 이름은 비어있으면 않됩니다")
+        @Nullable
         private String name;
+        @Nullable
         private ItemCategory category;
+        @Nullable
         @Positive(message = "제품 가격은 0 이하여서는 않됩니다.")
         private Long price;
     }

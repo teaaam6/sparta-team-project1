@@ -22,6 +22,7 @@ public class ItemGetPageDto {
         private final ItemStatus status;
         private final LocalDateTime createdAt;
 
+        private final Long adminId;
         private final String adminName;
     }
 }

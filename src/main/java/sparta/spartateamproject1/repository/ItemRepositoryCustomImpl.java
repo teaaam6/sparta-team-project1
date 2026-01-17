@@ -39,6 +39,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         item.stock,
                         item.status,
                         item.createdAt,
+                        item.admin.id,
                         admin.name
                 ))
                 .from(item)

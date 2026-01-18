@@ -27,8 +27,8 @@ public class CustomerServiceImpl implements CustomerService {
     // 고객 리스트 조회
     // 모든 관리자가 접근 가능
     @Override
-    public Page<CustomerGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute, CustomerSearchCondition dto, Pageable pageable) {
-        adminRepository.findById(loginSessionAttribute.getId()).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+    public Page<CustomerGetDto.Response> findAll(Long id, CustomerSearchCondition dto, Pageable pageable) {
+        adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
         return customerRepository.findByOption(dto, pageable);
     }
 
@@ -50,9 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerUpdateDto.Response update(LoginSessionAttribute loginSessionAttribute, Long id, CustomerUpdateDto.Request request) {
-        adminRepository.findById(loginSessionAttribute.getId()).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
+    public CustomerUpdateDto.Response update(Long id, Long customerId, CustomerUpdateDto.Request request) {
+        adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
 
         // request에 들어올수있는 값들이 null인지 확인 후 null이면 변경 X
         String name = request.getName() == null ? customer.getName() : request.getName();
@@ -71,9 +71,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerUpdateDto.StatusResponse updateStatus(LoginSessionAttribute loginSessionAttribute, Long id, CustomerUpdateDto.StatusRequest request) {
-        adminRepository.findById(loginSessionAttribute.getId()).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
+    public CustomerUpdateDto.StatusResponse updateStatus(Long id, Long customerId, CustomerUpdateDto.StatusRequest request) {
+        adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
 
         customer.updateStatus(request.getStatus());
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import jakarta.validation.Valid;
 
 import sparta.spartateamproject1.dto.*;
+import sparta.spartateamproject1.jwt.JWTUtil;
 import sparta.spartateamproject1.service.ItemService;
 
 @RestController
@@ -19,14 +20,19 @@ import sparta.spartateamproject1.service.ItemService;
 @RequestMapping("/api/admin")
 public class ItemController {
     private final ItemService itemService;
+    private final JWTUtil jwtUtil;
 
     @PostMapping("/items")
     public ResponseEntity<?> addItem(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @RequestHeader("Authorization") String token,
         @Valid @RequestBody ItemAddDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                itemService.addItem(loginSessionAttribute.getId(), req));
+                itemService.addItem(id, req));
     }
 
     @GetMapping("/items")
@@ -56,12 +62,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/info")
     public ResponseEntity<ItemUpdateInfoDto.Response> updateInfo(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateInfoDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateInfo(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -69,12 +79,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/stock")
     public ResponseEntity<ItemUpdateStockDto.Response> updateStock(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateStockDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStock(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -82,12 +96,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/status")
     public ResponseEntity<ItemUpdateStatusDto.Response> updateStatus(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateStatusDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStatus(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -95,11 +113,15 @@ public class ItemController {
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> delete(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         itemService.delete(
-            loginSessionAttribute,
+            id,
             itemId
         );
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

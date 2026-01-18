@@ -88,13 +88,27 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/admin/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/admin/admins").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
+                        //전체 공개
+                        .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/admins").permitAll()
+
+                        //관리자라면 가능
+                        .requestMatchers(HttpMethod.GET, "/api/admin/admins").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/admin/admins/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin/admins/self").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin/admins/*/password").authenticated()
+
+                        //슈퍼관리자만 가능
+                        .requestMatchers(HttpMethod.PATCH,  "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/admin/admins/*/approve").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/admin/admins/*/deny").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
+
+                        .requestMatchers("/api/admin/items/**").permitAll()
+                        .requestMatchers("api/admin/items/**").permitAll()
+
                         .anyRequest().authenticated());
 
         http

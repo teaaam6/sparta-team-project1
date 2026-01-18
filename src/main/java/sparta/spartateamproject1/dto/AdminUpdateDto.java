@@ -1,11 +1,13 @@
 package sparta.spartateamproject1.dto;
 
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.type.AdminStatus;
 import sparta.spartateamproject1.type.Role;
@@ -15,14 +17,14 @@ public class AdminUpdateDto {
 
     @Getter
     public static class Request {
-        @NotBlank(message = "이름은 필수 기입란 입니다.")
+        @Nullable
         private String name;
 
-        @NotBlank(message = "이메일은 필수 기입란 입니다.")
+        @Nullable
         @Email
         private String email;
 
-        @NotBlank(message = "폰번호는 필수 기입란 입니다.")
+        @Nullable
         @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "폰번호 형식이 올바르지 않습니다.")
         private String phoneNumber;
     }
@@ -101,7 +103,9 @@ public class AdminUpdateDto {
 
     @Getter
     public static class PasswordRequest {
+        @NotBlank(message = "비밀번호를 입력해주세요.")
         private String oldPassword;
+        @NotBlank(message = "비밀번호를 입력해주세요.")
         private String newPassword;
     }
 

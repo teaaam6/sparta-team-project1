@@ -20,8 +20,6 @@ import sparta.spartateamproject1.type.ErrorCode;
 import sparta.spartateamproject1.type.Role;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -125,7 +123,33 @@ public class AdminServiceImpl implements AdminService {
         Admin requesterAdmin = checkSuper(requesterId);
         Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
-        targetAdmin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+        // request 값 확인 후 null이면 변경 X, ""이나 " " 이면 오류
+        // name, email, phoneNumber: notBlank( 널, "", " " 안됨)
+        String name = targetAdmin.getName();
+        if (request.getName() != null) {
+            if (request.getName().isBlank()) {
+                throw new InvalidRequestException("이름은 공백일 수 없습니다.");
+            }
+            name = request.getName();
+        }
+
+        String email = targetAdmin.getEmail();
+        if (request.getEmail() != null) {
+            if (request.getEmail().isBlank()) {
+                throw new InvalidRequestException("이메일은 공백일 수 없습니다.");
+            }
+            email = request.getEmail();
+        }
+
+        String phoneNumber = targetAdmin.getPhoneNumber();
+        if (request.getPhoneNumber() != null) {
+            if (request.getPhoneNumber().isBlank()) {
+                throw new InvalidRequestException("전화번호는 공백일 수 없습니다.");
+            }
+            phoneNumber = request.getPhoneNumber();
+        }
+
+        targetAdmin.updateAdmin(name, email, phoneNumber);
         return AdminUpdateDto.Response.fromEntity(targetAdmin);
     }
 
@@ -156,7 +180,6 @@ public class AdminServiceImpl implements AdminService {
         targetAdmin.updateStatus(request.getStatus());
         return AdminUpdateDto.StatusResponse.fromEntity(targetAdmin);
     }
-
 
     //관리자 삭제 - 슈퍼관리자만 가능
     @Override
@@ -190,6 +213,11 @@ public class AdminServiceImpl implements AdminService {
         //승인하려는 관리자 확인
         Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
 
+        //현재 waiting 상태인 관리자인지 확인
+        if(!targetAdmin.getStatus().equals(AdminStatus.WAITING)){
+            throw new InvalidRequestException("승인대기중인 관리자가 아닙니다.");
+        }
+
         ApprovalResult result = new ApprovalResult("", null, LocalDateTime.now(), true);
         targetAdmin.setApprovalResult(result);
         targetAdmin.updateStatus(AdminStatus.ACTIVE);
@@ -206,13 +234,18 @@ public class AdminServiceImpl implements AdminService {
         //이 아이디가 슈퍼관리자인지 확인
         Admin superAdmin = checkSuper(requesterId);
         //승인하려는 관리자 확인
-        Admin admin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+        Admin targetAdmin = adminRepository.findById(targetId).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
+
+        //현재 waiting 상태인 관리자인지 확인
+        if(!targetAdmin.getStatus().equals(AdminStatus.WAITING)){
+            throw new InvalidRequestException("승인대기중인 관리자가 아닙니다.");
+        }
 
         ApprovalResult result = new ApprovalResult(request.deniedReason, LocalDateTime.now(), null, false);
-        admin.setApprovalResult(result);
-        admin.updateStatus(AdminStatus.DENIED);
+        targetAdmin.setApprovalResult(result);
+        targetAdmin.updateStatus(AdminStatus.DENIED);
 
-        return AdminDeniedDto.DeniedResponse.fromEntity(admin);
+        return AdminDeniedDto.DeniedResponse.fromEntity(targetAdmin);
     }
 
     //관리자 자신의 정보수정
@@ -221,9 +254,35 @@ public class AdminServiceImpl implements AdminService {
     public UpdateSelfDto.Response updateSelf(Long id, UpdateSelfDto.Request request) {
         //요청한 관리자 id의 값을 request 대로 바꾸기 때문에 관리자 자신이 맞는지 검증하지 않음
 
-        //정보 업데이트
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new AdminNotFoundException("존재하지 않는 관리자입니다."));
-        admin.updateAdmin(request.getName(), request.getEmail(), request.getPhoneNumber());
+
+        // request 값 확인 후 null이면 변경 X, ""이나 " " 이면 오류
+        // name, email, phoneNumber: notBlank( 널, "", " " 안됨)
+        String name = admin.getName();
+        if (request.getName() != null) {
+            if (request.getName().isBlank()) {
+                throw new InvalidRequestException("이름은 공백일 수 없습니다.");
+            }
+            name = request.getName();
+        }
+
+        String email = admin.getEmail();
+        if (request.getEmail() != null) {
+            if (request.getEmail().isBlank()) {
+                throw new InvalidRequestException("이메일은 공백일 수 없습니다.");
+            }
+            email = request.getEmail();
+        }
+
+        String phoneNumber = admin.getPhoneNumber();
+        if (request.getPhoneNumber() != null) {
+            if (request.getPhoneNumber().isBlank()) {
+                throw new InvalidRequestException("전화번호는 공백일 수 없습니다.");
+            }
+            phoneNumber = request.getPhoneNumber();
+        }
+
+        admin.updateAdmin(name, email, phoneNumber);
 
         return UpdateSelfDto.Response.fromEntity(admin);
     }
@@ -247,10 +306,6 @@ public class AdminServiceImpl implements AdminService {
             throw new InvalidPasswordException("비밀번호가 다릅니다.");
         }
 
-        //바꿀 비밀번호와 현재 비밀번호가 같다면 오류
-        if(passwordEncoder.matches(request.getNewPassword(), targetAdmin.getPassword())) {
-            throw new SamePasswordException("동일한 비밀번호로 바꿀 수 없습니다.");
-        }
         String password = passwordEncoder.encode(request.getNewPassword());
         targetAdmin.updatePassword(password);
 

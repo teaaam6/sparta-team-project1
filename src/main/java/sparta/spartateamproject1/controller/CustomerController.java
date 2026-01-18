@@ -52,4 +52,22 @@ public class CustomerController {
 
         return ResponseEntity.status(HttpStatus.OK).body(customerService.updateStatus(id, customerId, dto));
     }
+
+    //세부조회
+    @GetMapping("/customers/{customerId}")
+    public ResponseEntity<CustomerGetDto.Response> getOne(
+            @PathVariable Long customerId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.findOne(customerId));
+    }
+
+    //고객삭제
+    @DeleteMapping("/customers/{customerId}")
+    public ResponseEntity<Void> delete(
+        // @RequestHeader("Authorization") String token,
+        @PathVariable Long customerId
+    ) {
+        customerService.delete(customerId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

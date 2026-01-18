@@ -7,11 +7,17 @@ import sparta.spartateamproject1.dto.*;
 public interface CustomerService {
 
     //전체조회
-    Page<CustomerGetDto.Response> findAll(LoginSessionAttribute loginSessionAttribute, CustomerSearchCondition dto, Pageable pageable);
+    Page<CustomerGetDto.Response> findAll(Long id, CustomerSearchCondition dto, Pageable pageable);
+
     //세부조회
     CustomerGetDto.Response findOne(Long customerId);
+
+    //삭제
+    void delete(Long customerId);
+
     //수정
-//    CustomerGetDto.Response update(Long id, Long adminId, AdminUpdateDto.Request request);
-   //삭제
-    void delete(LoginSessionAttribute loginSessionAttribute, Long customerId);
+    CustomerUpdateDto.Response update(Long id, Long customerId, CustomerUpdateDto.Request request);
+
+    // 고객 상태 변경
+    CustomerUpdateDto.StatusResponse updateStatus(Long id, Long customerId, CustomerUpdateDto.StatusRequest request);
 }

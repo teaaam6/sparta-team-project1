@@ -47,4 +47,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleItemNotFoundException(ItemNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<?> handleInvalidPasswordException(InvalidPasswordException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<?> handleInvalidRequestException(InvalidRequestException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }

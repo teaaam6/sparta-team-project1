@@ -11,9 +11,6 @@ import java.time.LocalDateTime;
 
 public class AdminApprovedDto {
 
-    //슈퍼 관리자가 pathvariable에 있는 admin을 아래 status로 변경하고 싶다고 서버에 request
-    //승인 request
-
 
     @Getter
     @Builder
@@ -28,7 +25,7 @@ public class AdminApprovedDto {
                     .id(admin.getId())
                     .name(admin.getName())
                     .status(admin.getStatus())
-                    .approvedAt(admin.getApprovalResult().getApprovedAt())
+                    .approvedAt(admin.getApprovalResult() == null ? null : admin.getApprovalResult().getApprovedAt())
                     .build();
         }
     }

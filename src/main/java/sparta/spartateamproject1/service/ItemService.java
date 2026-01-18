@@ -2,17 +2,20 @@ package sparta.spartateamproject1.service;
 
 import sparta.spartateamproject1.dto.ItemAddDto;
 import sparta.spartateamproject1.dto.ItemGetDto;
+import sparta.spartateamproject1.dto.ItemGetPageDto;
+import sparta.spartateamproject1.dto.ItemSearchCondition;
 import sparta.spartateamproject1.dto.ItemUpdateInfoDto;
 import sparta.spartateamproject1.dto.ItemUpdateStockDto;
 import sparta.spartateamproject1.dto.ItemUpdateStatusDto;
 import sparta.spartateamproject1.dto.LoginSessionAttribute;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface ItemService {
 
     //전체조회
-    List<ItemGetDto.Response> findAll();
+    Page<ItemGetPageDto.Response> findAll(ItemSearchCondition conditionDto, PageRequest pageRequest);
 
     //세부조회
     ItemGetDto.Response findOne(Long id);
@@ -22,28 +25,28 @@ public interface ItemService {
 
     // 정보 수정
     ItemUpdateInfoDto.Response updateInfo(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateInfoDto.Request request
     );
 
     // 재고 수정
     ItemUpdateStockDto.Response updateStock(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateStockDto.Request request
     );
 
     // 상태 수정
     ItemUpdateStatusDto.Response updateStatus(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateStatusDto.Request request
     );
 
     // 삭제
     void delete(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId
     );
 }

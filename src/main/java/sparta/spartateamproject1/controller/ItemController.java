@@ -1,33 +1,56 @@
 package sparta.spartateamproject1.controller;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-import sparta.spartateamproject1.dto.*;
-import sparta.spartateamproject1.service.ItemService;
+import org.springframework.data.domain.Sort;
 
-import java.util.List;
+import jakarta.validation.Valid;
+
+import sparta.spartateamproject1.dto.*;
+import sparta.spartateamproject1.jwt.JWTUtil;
+import sparta.spartateamproject1.service.ItemService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
 public class ItemController {
     private final ItemService itemService;
+    private final JWTUtil jwtUtil;
 
     @PostMapping("/items")
     public ResponseEntity<?> addItem(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @RequestHeader("Authorization") String token,
         @Valid @RequestBody ItemAddDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                itemService.addItem(loginSessionAttribute.getId(), req));
+                itemService.addItem(id, req));
     }
 
     @GetMapping("/items")
-    public ResponseEntity<List<ItemGetDto.Response>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll());
+    public ResponseEntity<Page<ItemGetPageDto.Response>> getAll(
+        @ModelAttribute ItemSearchCondition conditionDto
+    ) {
+        // JPA는 0부터 시작
+        int pageNumber = conditionDto.getPageNumber() - 1;
+        int pageSize = conditionDto.getPageSize();
+        boolean asc = conditionDto.isAsc();
+        String sortBy = conditionDto.getSortBy();
+
+        PageRequest pageRequest = PageRequest.of(
+                pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.findAll(
+            conditionDto, pageRequest
+        ));
     }
 
     @GetMapping("/items/{itemId}")
@@ -39,12 +62,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/info")
     public ResponseEntity<ItemUpdateInfoDto.Response> updateInfo(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+        @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateInfoDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateInfo(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -52,12 +79,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/stock")
     public ResponseEntity<ItemUpdateStockDto.Response> updateStock(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateStockDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStock(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -65,12 +96,16 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}/status")
     public ResponseEntity<ItemUpdateStatusDto.Response> updateStatus(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId,
         @Valid @RequestBody ItemUpdateStatusDto.Request req
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         return ResponseEntity.status(HttpStatus.OK).body(itemService.updateStatus(
-            loginSessionAttribute,
+            id,
             itemId,
             req
         ));
@@ -78,11 +113,15 @@ public class ItemController {
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> delete(
-        @SessionAttribute(name = "adminSession") LoginSessionAttribute loginSessionAttribute,
+            @RequestHeader("Authorization") String token,
         @PathVariable Long itemId
     ) {
+        token = token.replace("Bearer ", "").trim();
+
+        Long id = jwtUtil.getId(token);
+
         itemService.delete(
-            loginSessionAttribute,
+            id,
             itemId
         );
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

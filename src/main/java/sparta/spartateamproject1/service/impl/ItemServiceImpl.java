@@ -70,14 +70,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemUpdateInfoDto.Response updateInfo(
-        LoginSessionAttribute attr,
+        Long id,
         Long itemId,
         ItemUpdateInfoDto.Request req
     ) {
         // 제 생각에 모든 admin이 수정이 가능 할거라 생각하지만,
         // 혹시 admin이 비활성이거나 정지된 admin일 경우를 대비하여
         // 체크를 하는 것이 맞다고 생각합니다.
-        getAdminIfExistsAndActive(attr.getId());
+        getAdminIfExistsAndActive(id);
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -91,12 +91,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemUpdateStockDto.Response updateStock(
-        LoginSessionAttribute attr,
+        Long id,
         Long itemId,
         ItemUpdateStockDto.Request req
     ) {
         // TODO: item 재고 관리를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        getAdminIfExistsAndActive(id);
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -110,12 +110,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemUpdateStatusDto.Response updateStatus(
-        LoginSessionAttribute attr,
+        Long id,
         Long itemId,
         ItemUpdateStatusDto.Request req
     ) {
         // TODO: item 상태 관리를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        getAdminIfExistsAndActive(id);
 
         Item item = itemRepository.findById(itemId).orElseThrow(
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
@@ -129,11 +129,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void delete(
-        LoginSessionAttribute attr,
+        Long id,
         Long itemId
     ) {
         // TODO: item 삭제를 할수있는 관리자는 누구일까요?
-        getAdminIfExistsAndActive(attr.getId());
+        getAdminIfExistsAndActive(id);
 
         if (!itemRepository.existsById(itemId)) {
             throw new ItemNotFoundException("존재하지 않는 상품 입니다.");

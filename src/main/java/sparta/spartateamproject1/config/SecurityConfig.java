@@ -88,13 +88,13 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/admin/*").permitAll()
-                        .requestMatchers("/api/admin/customer/**").permitAll()
-                        .requestMatchers("/api/admin/items/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/admin/admins/**").permitAll()
+                        .requestMatchers("/api/admin/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/admin/admins").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/admin/admins/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
                         .anyRequest().authenticated());
 
         http

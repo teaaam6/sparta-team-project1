@@ -25,28 +25,28 @@ public interface ItemService {
 
     // 정보 수정
     ItemUpdateInfoDto.Response updateInfo(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateInfoDto.Request request
     );
 
     // 재고 수정
     ItemUpdateStockDto.Response updateStock(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateStockDto.Request request
     );
 
     // 상태 수정
     ItemUpdateStatusDto.Response updateStatus(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId, 
             ItemUpdateStatusDto.Request request
     );
 
     // 삭제
     void delete(
-            LoginSessionAttribute attr, 
+            Long id,
             Long itemId
     );
 }

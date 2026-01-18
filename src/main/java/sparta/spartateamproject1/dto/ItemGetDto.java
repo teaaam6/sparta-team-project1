@@ -24,14 +24,17 @@ public class ItemGetDto {
         private final ItemStatus status;
         private final LocalDateTime createdAt;
 
+        private final Long adminId;
         private final String adminName;
         private final String adminEmail;
 
         public static ItemGetDto.Response fromEntity(Item item, Optional<Admin> admin){
+            Long adminId = null;
             String adminName = null;
             String adminEmail = null;
 
             if (admin.isPresent()) {
+                adminId = admin.get().getId();
                 adminName = admin.get().getName();
                 adminEmail = admin.get().getEmail();
             }
@@ -46,6 +49,7 @@ public class ItemGetDto {
                     .status(item.getStatus())
                     .createdAt(item.getCreatedAt())
 
+                    .adminId(adminId)
                     .adminName(adminName)
                     .adminEmail(adminEmail)
 

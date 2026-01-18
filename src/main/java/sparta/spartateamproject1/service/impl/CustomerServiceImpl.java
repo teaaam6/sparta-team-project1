@@ -46,8 +46,8 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("존재하지 않는 고객입니다."));
 
         // request에 들어올수있는 값들이 null인지 확인 후 null이면 변경 X
-        String name = request.getName() == null ? customer.getName() : request.getName();
-        String email = request.getEmail() == null ? customer.getEmail() : request.getEmail();
+        String name = request.getName() == null || request.getName().isBlank()? customer.getName() : request.getName();
+        String email = request.getEmail() == null || request.getEmail().isBlank() ? customer.getEmail() : request.getEmail();
         String phoneNumber = request.getPhoneNumber() == null ? customer.getPhoneNumber() : request.getPhoneNumber();
 
         customer.updateCustomer(name, email, phoneNumber);

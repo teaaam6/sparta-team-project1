@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import sparta.spartateamproject1.dto.*;
 import sparta.spartateamproject1.entity.Admin;
 import sparta.spartateamproject1.type.AdminStatus;
@@ -17,6 +18,7 @@ import sparta.spartateamproject1.type.Role;
 import sparta.spartateamproject1.exception.AdminNotFoundException;
 import sparta.spartateamproject1.exception.ForbiddenException;
 import sparta.spartateamproject1.exception.ItemNotFoundException;
+import sparta.spartateamproject1.type.ItemCategory;
 
 import java.util.Optional;
 
@@ -83,7 +85,11 @@ public class ItemServiceImpl implements ItemService {
             () -> new ItemNotFoundException("존재하지 않는 상품 입니다.")
         );
 
-        item.updateInfo(req.getName(), req.getCategory(), req.getPrice());
+        String itemName = (req.getName() == null || req.getName().isBlank()) ? item.getName() : req.getName();
+        ItemCategory itemCategory = req.getCategory() == null ? item.getCategory() : req.getCategory();
+        Long itemPrice = req.getPrice() == null ? item.getPrice() : req.getPrice();
+
+        item.updateInfo(itemName, itemCategory, itemPrice);
 
         return ItemUpdateInfoDto.Response.fromEntity(item);
     }

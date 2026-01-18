@@ -106,8 +106,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/admin/customers/**").hasAuthority("SUPER_ADMIN")
 
-                        .requestMatchers("/api/admin/items/**").permitAll()
-                        .requestMatchers("api/admin/items/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/admin/items/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/items/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin/items/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admin/items/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                         .anyRequest().authenticated());
 

@@ -40,6 +40,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 return;
             }
 
+            Long id = jwtUtil.getId(token);
             String email = jwtUtil.getEmail(token);
             String type = jwtUtil.getType(token);
             Role role = Role.valueOf(type);
@@ -48,13 +49,12 @@ public class JWTFilter extends OncePerRequestFilter {
             System.out.println("Extracted role: " + role);  // 확인용 로그
 
             Admin admin = Admin.builder()
-                    .name("tempname")
+//                    .name("tempname")
+                    .id(id)
                     .email(email)
                     .password("temppassword")
-                    .phoneNumber("tempphone")
+//                    .phoneNumber("tempphone")
                     .role(role)
-                    .status(null)
-                    .approvalResult(null)
                     .build();
 
             CustomUserDetails customUserDetails = new CustomUserDetails(admin);

@@ -143,7 +143,7 @@ spring.jwt.secret="길면 길수록 좋은 secret key 입니다. 아무 값이�
 
 - 0xc0de1dea [https://urgenius.tistory.com/entry/내배캠-본캠프-29일차-TIL](https://urgenius.tistory.com/entry/%EB%82%B4%EB%B0%B0%EC%BA%A0-%EB%B3%B8%EC%BA%A0%ED%94%84-29%EC%9D%BC%EC%B0%A8-TIL)
 - Spring2LEE [https://blog.naver.com/ljs50807/224152013586](https://blog.naver.com/ljs50807/224152013586)
-- hhjo96 []()
+- hhjo96 [https://velog.io/@qnpfrqnpfr96/스프링-이커머스-백오피스-과제-til](https://velog.io/@qnpfrqnpfr96/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4-%EB%B0%B1%EC%98%A4%ED%94%BC%EC%8A%A4-%EA%B3%BC%EC%A0%9C-til)
 - imprity [https://velog.io/@imprity/Sparta-이커머스-백-오피스-과제-TIL](https://velog.io/@imprity/Sparta-%EC%9D%B4%EC%BB%A4%EB%A8%B8%EC%8A%A4-%EB%B0%B1-%EC%98%A4%ED%94%BC%EC%8A%A4-%EA%B3%BC%EC%A0%9C-TIL)
 - sylee09 [https://velog.io/@sy99/고객-및-상품-관리-시스템-프로젝트](https://velog.io/@sy99/%EA%B3%A0%EA%B0%9D-%EB%B0%8F-%EC%83%81%ED%92%88-%EA%B4%80%EB%A6%AC-%EC%8B%9C%EC%8A%A4%ED%85%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
 

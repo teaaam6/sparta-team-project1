@@ -14,9 +14,6 @@ public interface AdminService {
 
     FindSelfResponseDto findSelf(Long id);
 
-    //Todo
-    //List<AdminGetDto> findAll(LoginSessionAttribute loginSessionAttribute, Pageable pageable, AdminGetDto request);
-
     Page<AdminGetAllDto.Response> findAll(Long id, AdminSearchCondition conditionDto, Pageable pageable);
 
     AdminGetDto.Response findOne(Long id, Long adminId);

@@ -101,7 +101,6 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateStockDto.Request req
     ) {
-        // TODO: item 재고 관리를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(id);
 
         Item item = itemRepository.findById(itemId).orElseThrow(
@@ -120,7 +119,6 @@ public class ItemServiceImpl implements ItemService {
         Long itemId,
         ItemUpdateStatusDto.Request req
     ) {
-        // TODO: item 상태 관리를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(id);
 
         Item item = itemRepository.findById(itemId).orElseThrow(
@@ -138,7 +136,6 @@ public class ItemServiceImpl implements ItemService {
         Long id,
         Long itemId
     ) {
-        // TODO: item 삭제를 할수있는 관리자는 누구일까요?
         getAdminIfExistsAndActive(id);
 
         if (!itemRepository.existsById(itemId)) {

@@ -139,6 +139,10 @@ spring.jwt.secret="길면 길수록 좋은 secret key 입니다. 아무 값이�
 
 자세한 사항은 src/main/java/sparta/spartateamproject1/dev 폴더를 참고해 주세요.
 
+# 시연 영상
+
+[![Video Label](http://img.youtube.com/vi/DxRxdDdZ8Po/0.jpg)](https://youtu.be/DxRxdDdZ8Po)
+
 # TIL 및 후기
 
 - 0xc0de1dea [https://urgenius.tistory.com/entry/내배캠-본캠프-29일차-TIL](https://urgenius.tistory.com/entry/%EB%82%B4%EB%B0%B0%EC%BA%A0-%EB%B3%B8%EC%BA%A0%ED%94%84-29%EC%9D%BC%EC%B0%A8-TIL)

@@ -38,7 +38,7 @@ public class AdminAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다");
         }
 
-        // 🔥 여기서 상태 체크
+        // 여기서 상태 체크
         if (admin.getStatus() != AdminStatus.ACTIVE) {
             throw new AdminNotApprovedException("승인되지 않은 관리자입니다");
         }

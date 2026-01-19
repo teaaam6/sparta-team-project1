@@ -42,7 +42,7 @@ public class AdminRepositoryCustomImpl implements AdminRepositoryCustom{
                         admin.approvalResult.approvedAt
                 ))
                 .from(admin)
-                .where(adminNameEquals(dto), adminEmailEquals(dto), adminStatusEquals(dto))
+                .where(adminNameEquals(dto), adminEmailEquals(dto), adminStatusEquals(dto), adminRoleEquals(dto))
                 .orderBy(getSortOrder(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -73,6 +73,13 @@ public class AdminRepositoryCustomImpl implements AdminRepositoryCustom{
     private BooleanExpression adminStatusEquals(AdminSearchCondition dto) {
         if (dto != null&&dto.getStatus() != null) {
             return admin.status.eq(dto.getStatus());
+        }
+        return null;
+    }
+
+    private BooleanExpression adminRoleEquals(AdminSearchCondition dto) {
+        if(dto != null && dto.getRole() != null) {
+            return admin.role.eq(dto.getRole());
         }
         return null;
     }

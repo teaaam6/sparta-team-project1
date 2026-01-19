@@ -77,7 +77,6 @@ public class AdminController {
         // JPA는 0부터 시작
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
         return adminService.findAll(id, conditionDto, pageRequest);
-
     }
 
 //

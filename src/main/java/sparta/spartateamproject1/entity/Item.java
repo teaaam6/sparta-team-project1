@@ -59,12 +59,22 @@ public class Item {
     }
 
     public void updateStock(Long stock) {
+        Long previousStock = this.stock;
+
         this.stock = stock;
 
         // item상태가 단종이 아닐 경우 자동으로 업데이트 합니다.
         if (this.status != ItemStatus.DISCONTINUED) {
-            if (this.stock <= 0) {
-                this.status = ItemStatus.SOLD_OUT;
+            // 실제로 재고가 의미있게 변경 되었는지 확인
+            if (
+                (previousStock <= 0 && this.stock > 0) ||
+                (previousStock > 0 && this.stock <= 0)
+            ) {
+                if (this.stock <= 0) {
+                    this.status = ItemStatus.SOLD_OUT;
+                }else {
+                    this.status = ItemStatus.ON_SALE;
+                }
             }
         }
     }

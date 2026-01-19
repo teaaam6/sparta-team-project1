@@ -14,11 +14,16 @@ Spring을 배우기 위해 만든 간단한 toy back office 서버입니다.
 
 을 유지관리 하는 기능을 가지고 있습니다.
 
-관리자는 `SUPER_ADMIN`, `ADMIN`, `CS_MANAGER`로 나뉘어져 있으며 저희 서버를 이용하여 관리자는 상품과 고객을 관리할 수 있습니다.
+인증및 인가는 JWT를 활용하고 있으며
+
+관리자는 `SUPER_ADMIN`, `ADMIN`, `CS_MANAGER`로 나뉘어져 있고, 저희 서버를 이용하여 관리자는 상품과 고객을 관리할 수 있습니다.
+
+# 개발환경
+- IDE: IntelliJ IDEA
 
 # 기술 스택
 - Language: Java 17
-- IDE: IntelliJ IDEA
+- Framework: Spring Boot 3.5.9, JPA, querydsl, spring-security
 
 # 빌드
 

@@ -16,14 +16,19 @@ app.add-test-customers=true
 
 # 데이터베이스 설정
 spring.datasource.url=jdbc:mysql://localhost:3306/db
+
 spring.datasource.username=name
 spring.datasource.password=password
+
 spring.jpa.hibernate.ddl-auto=create
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
+
+# jwt secret key
+spring.jwt.secret="길면 길수록 좋은 secret key 입니다. 아무 값이나 넣어주세요 (저희는 HS256 를 쓰기 때문에 32 byte 이상이어야 합니다)"
 ```
 
 # 테스트 데이터 추가
